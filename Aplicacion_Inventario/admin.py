@@ -8,6 +8,7 @@ class CampaniaAdmin(admin.ModelAdmin):
     
 admin.site.register(Notebook)
 admin.site.register(Campania, CampaniaAdmin)
-admin.site.register(Periferico)
+admin.site.register(Mouse)
+admin.site.register(Headset)
 admin.site.register(Persona)
 admin.site.register(Computadora)
