@@ -32,6 +32,7 @@ class Notebook(models.Model):
     marca_notebook = models.CharField(max_length=100)
     numero_serie_notebook = models.CharField(max_length=100)
     modelo_notebook = models.CharField(max_length=100)
+    estado_notebook = models.CharField(max_length=100, null=False)
     
     def __str__(self):
         return f'La notebook - Marca: {self.marca_notebook}, Modelo: {self.modelo_notebook}'
