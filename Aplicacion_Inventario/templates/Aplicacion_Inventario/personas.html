@@ -1,0 +1,52 @@
+{% extends 'Aplicacion_Inventario/index.html' %}
+
+{% block titulo %}
+    <title>SGI - Usuarios</title>
+{% endblock titulo %}
+
+
+{% block titulo_pagina %}
+    <h1 class="mt-4"> Panel de gestión de usuarios</h1>
+{% endblock titulo_pagina %}
+
+
+{% block contenido_pagina %}
+
+<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Usuarios </h1>
+<br>
+<div class="botones-container">
+    <a href="#" class="mi-boton">Agregar Usuario</a>
+    <a href="#" class="mi-boton">Eliminar Usuario</a>
+    <a href="#" class="mi-boton">Actualizar Usuario</a>
+</div>
+<br>
+
+
+<table class="table">
+    <thead class="th">
+        <th>Identificador</th>
+        <th>Nombre Completo</th>
+        <th>CUIT</th>
+        <th>E-Mail</th>
+        <th>Mouse asignado?</th>
+        <th>Teclado asignado?</th>
+        <th>Auricular asignado?</th>
+    </thead>
+    <tbody>
+        {% for p in personas %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nombre_persona }} {{ p.apellido_persona }}</td>
+            <td>{{ p.cuit_persona }}</td>
+            <td>{{ p.email_persona }}</td>
+            <td>{{ p.mouse_asignado }}</td>
+            <td>{{ p.teclado_asignado }}</td>
+            <td>{{ p.auricular_asignado }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock contenido_pagina %}
+

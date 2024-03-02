@@ -1,0 +1,47 @@
+{% extends 'Aplicacion_Inventario/index.html' %}
+
+{% block titulo %}
+    <title>SGI - Notebooks</title>
+{% endblock titulo %}
+
+{% block titulo_pagina %}
+<h1 class="mt-4"> Panel de gestión de notebooks</h1>
+{% endblock titulo_pagina %}
+
+
+{% block contenido_pagina %}
+
+<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Notebooks </h1>
+<br>
+<div class="botones-container">
+    <a href="#" class="mi-boton">Agregar Notebook</a>
+    <a href="#" class="mi-boton">Eliminar Notebook</a>
+    <a href="#" class="mi-boton">Actualizar Notebook</a>
+</div>
+<br>
+
+<table class="table">
+    <thead class="th">
+        <th>Identificador</th>
+        <th>Marca</th>
+        <th>Nombre</th>
+        <th>Numero de Serie</th>
+        <th>Modelo</th>
+    </thead>
+    <tbody>
+        {% for n in notebooks %}
+            <tr>
+                <td>{{ n.id }}</td>
+                <td>{{ n.marca_notebook }}</td>
+                <td>{{ n.nombre_notebook }}</td>
+                <td>{{ n.numero_serie_notebook }}</td>
+                <td>{{ n.modelo_notebook }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock contenido_pagina %}
+
+
+    

@@ -1,0 +1,40 @@
+{% extends 'Aplicacion_Inventario/index.html' %}
+
+{% block titulo %}
+    <title>SGI - Campañas</title>
+{% endblock titulo %}
+
+
+{% block titulo_pagina %}
+<h1 class="mt-4"> Panel de gestión de campañas</h1>
+{% endblock titulo_pagina %}
+
+
+{% block contenido_pagina %}
+
+<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Campañas </h1>
+<br>
+<div class="botones-container">
+    <a href="#" class="mi-boton">Agregar Campaña</a>
+    <a href="#" class="mi-boton">Eliminar Campaña</a>
+    <a href="#" class="mi-boton">Actualizar Campaña</a>
+</div>
+<br>
+<table class="table">
+    <thead class="th">
+        <th>Identificador</th>
+        <th>Nombre de Campaña</th>
+        <th>Descripcion</th>
+    </thead>
+    <tbody>
+        {% for c in campanias %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.nombre_campania }}</td>
+                <td>{{ c.descripcion_campania }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido_pagina %}
+
