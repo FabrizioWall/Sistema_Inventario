@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Campania(models.Model):
     nombre_campania = models.CharField(max_length=100)
-    descripcion_campania = models.CharField(max_length=250)
+    descripcion_campania = models.CharField(max_length=250, null=True, blank="True", default='Sin descripción')
     
     class Meta:
         verbose_name = 'Campania'
