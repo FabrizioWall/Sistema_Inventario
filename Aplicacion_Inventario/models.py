@@ -18,14 +18,26 @@ class Campania(models.Model):
 class Headset(models.Model):
     marca_headset = models.CharField(max_length=100)
     
+    class Meta:
+        verbose_name = 'Headset'
+        verbose_name_plural = 'Headsets'
+        
+        ordering = ['marca_headset']
+
     def __str__(self):
-        return 'Headset'
+        return f'{self.marca_headset}'
 
 class Mouse(models.Model):  
     marca_mouse = models.CharField(max_length=100)
     
+    class Meta:
+        verbose_name = 'Mouse'
+        verbose_name_plural = 'Mouses'
+        
+        ordering = ['marca_mouse']
+    
     def __str__(self):
-        return 'Mouse'
+        return f'{self.marca_mouse}'
 
 class Notebook(models.Model):
     nombre_notebook = models.CharField(max_length=100)
@@ -35,7 +47,7 @@ class Notebook(models.Model):
     estado_notebook = models.CharField(max_length=100)
     
     def __str__(self):
-        return f'La notebook - Marca: {self.marca_notebook}, Modelo: {self.modelo_notebook}'
+        return f'La notebook - Número de Serie: {self.numero_serie_notebook} y Nombre: {self.nombre_notebook}'
     
 class Computadora(models.Model):
     nombre_computadora = models.CharField(max_length=100)
@@ -43,7 +55,7 @@ class Computadora(models.Model):
     estado_computadora_escritorio = models.CharField(max_length=200)
     
     def __str__(self):
-        return f'Computadora'
+        return f'{self.nombre_computadora}'
     
 class Persona(models.Model):
     nombre_persona = models.CharField(max_length=100)
@@ -51,10 +63,10 @@ class Persona(models.Model):
     cuit_persona = models.CharField(max_length=100)
     email_persona = models.EmailField()
     id_notebook = models.OneToOneField(Notebook, on_delete=models.CASCADE)
-    id_computadora_escritorio = models.OneToOneField(Computadora, on_delete=models.CASCADE)
-    id_campania = models.ForeignKey(Campania, on_delete=models.CASCADE)
-    id_headset = models.ForeignKey(Headset, on_delete=models.CASCADE)
-    id_mouse = models.ForeignKey(Mouse, on_delete=models.CASCADE)
+    id_computadora_escritorio = models.OneToOneField(Computadora, on_delete=models.CASCADE, null=True, blank=True)
+    id_campania = models.ForeignKey(Campania, on_delete=models.CASCADE, null=True, blank=True)
+    id_headset = models.ForeignKey(Headset, on_delete=models.CASCADE, null=True, blank=True)
+    id_mouse = models.ForeignKey(Mouse, on_delete=models.CASCADE, null=True, blank=True)
     
     class Meta:
         ordering = ['nombre_persona', 'apellido_persona']

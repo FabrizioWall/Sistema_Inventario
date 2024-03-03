@@ -1,11 +1,51 @@
 {% extends 'Aplicacion_Inventario/index.html' %}
 
-{% block titulo_pagina %}
-<h1 class="mt-4"> Panel de gestión de perifericos</h1>
-{% endblock titulo_pagina %}
-
+{% block titulo %}
+    <title>SGI - Perifericos</title>
+{% endblock titulo %}
 
 {% block contenido_pagina %}
-    <h2> Pagina de Periferico </h2>
-{% endblock contenido_pagina %}
 
+<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Perifericos </h1>
+<br>
+<div class="botones-container">
+    <a href="#" class="mi-boton">Agregar Periferico</a>
+    <a href="#" class="mi-boton">Eliminar Periferico</a>
+    <a href="#" class="mi-boton">Actualizar Periferico</a>
+</div>
+<br>
+
+<table class="table">
+    <thead class="th">
+        <th>Identificador</th>
+        <th>Marca</th>
+    </thead>
+    <tbody>
+        {% for h in headsets %}
+            <tr>
+                <td>{{ h.id }}</td>
+                <td>{{ h.marca_headset }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table class="table">
+    <thead class="th">
+        <th>Identificador</th>
+        <th>Marca</th>
+    </thead>
+    <tbody>
+        {% for m in mouses %}
+            <tr>
+                <td>{{ m.id }}</td>
+                <td>{{ m.marca_mouse }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+
+{% endblock contenido_pagina %}

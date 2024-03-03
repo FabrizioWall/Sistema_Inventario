@@ -4,11 +4,6 @@
     <title>SGI - Notebooks</title>
 {% endblock titulo %}
 
-{% block titulo_pagina %}
-<h1 class="mt-4"> Panel de gestión de notebooks</h1>
-{% endblock titulo_pagina %}
-
-
 {% block contenido_pagina %}
 
 <h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Notebooks </h1>
@@ -27,6 +22,7 @@
         <th>Nombre</th>
         <th>Numero de Serie</th>
         <th>Modelo</th>
+        <th>Estado Notebook</th>
     </thead>
     <tbody>
         {% for n in notebooks %}

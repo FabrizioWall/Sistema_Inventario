@@ -10,11 +10,14 @@ def notebooks(request):
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)
 
 def campanias(request):
-    contexto = {'campanias': Campania.objects.all()}
+    contexto = {'campanias': Campania.objects.order_by('id')}
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
 
-def mouse(request):
-    contexto = {'mouses': mouse.objects.all()}
+def perifericos(request):
+    contexto = {
+        'mouses': Mouse.objects.all(),
+        'headsets': Headset.objects.all()
+    }
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 def personas(request):
