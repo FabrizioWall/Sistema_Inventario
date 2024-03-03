@@ -13,8 +13,8 @@ def campanias(request):
     contexto = {'campanias': Campania.objects.all()}
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
 
-def perifericos(request):
-    contexto = {'perifericos': Periferico.objects.all()}
+def mouse(request):
+    contexto = {'mouses': mouse.objects.all()}
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 def personas(request):

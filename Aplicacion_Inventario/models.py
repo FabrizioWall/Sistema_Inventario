@@ -32,7 +32,7 @@ class Notebook(models.Model):
     marca_notebook = models.CharField(max_length=100)
     numero_serie_notebook = models.CharField(max_length=100)
     modelo_notebook = models.CharField(max_length=100)
-    estado_notebook = models.CharField(max_length=100, null=False)
+    estado_notebook = models.CharField(max_length=100)
     
     def __str__(self):
         return f'La notebook - Marca: {self.marca_notebook}, Modelo: {self.modelo_notebook}'
@@ -48,13 +48,13 @@ class Computadora(models.Model):
 class Persona(models.Model):
     nombre_persona = models.CharField(max_length=100)
     apellido_persona = models.CharField(max_length=100)
-    cuit_persona = models.CharField(max_length=100, null=True, blank=True)
-    email_persona = models.EmailField(null=True, blank=True)
-    id_notebook = models.OneToOneField(Notebook, on_delete=models.CASCADE, null=True, blank=True, unique=True)
-    id_computadora_escritorio = models.OneToOneField(Computadora, on_delete=models.CASCADE, null=True, blank=True, unique=True)
-    id_campania = models.ForeignKey(Campania, on_delete=models.CASCADE, null=False, blank=False, unique=False)
-    id_headset = models.ForeignKey(Headset, on_delete=models.CASCADE, null=False, blank=False, unique=False)
-    id_headset = models.ForeignKey(Mouse, on_delete=models.CASCADE, null=True, blank=True, unique=False )
+    cuit_persona = models.CharField(max_length=100)
+    email_persona = models.EmailField()
+    id_notebook = models.OneToOneField(Notebook, on_delete=models.CASCADE)
+    id_computadora_escritorio = models.OneToOneField(Computadora, on_delete=models.CASCADE)
+    id_campania = models.ForeignKey(Campania, on_delete=models.CASCADE)
+    id_headset = models.ForeignKey(Headset, on_delete=models.CASCADE)
+    id_mouse = models.ForeignKey(Mouse, on_delete=models.CASCADE)
     
     class Meta:
         ordering = ['nombre_persona', 'apellido_persona']
