@@ -1,44 +1,65 @@
 {% extends 'Aplicacion_Inventario/index.html' %}
+{% load static %}
 
 {% block titulo %}
     <title>SGI - Usuarios</title>
 {% endblock titulo %}
 
-
-{% block titulo_pagina %}
-    <h1 class="mt-4"> Panel de gestión de usuarios</h1>
-{% endblock titulo_pagina %}
-
-
 {% block contenido_pagina %}
 
-<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Usuarios </h1>
-<br>
-<div class="botones-container">
-    <a href="#" class="mi-boton">Agregar Usuario</a>
-    <a href="#" class="mi-boton">Eliminar Usuario</a>
-    <a href="#" class="mi-boton">Actualizar Usuario</a>
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Usuarios</b></h1>
+        <h4 class="text-muted" style="font-size:30px;">Lista de usuarios</h4>
+    </div>
+    <div style="margin-left: auto; margin-right: 30px;">
+        <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
+    </div>
 </div>
+
 <br>
 
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <div class="box">
+            <input type="text" name="search" placeholder="Buscar..." class="src" autocomplete="off">
+        </div>
+    </div>
+    <div style="margin-left: auto; margin-right: 30px;">
+        <button class="boton-exportar">
+            <i class="fa-solid fa-file-export"></i> Exportar
+        </button>
+        <button class="boton-exportar">
+            <i class="fa-solid fa-plus"></i> Agregar Usuario
+        </button>
+    </div>
+</div>
+
+<br>
 
 <table class="table">
     <thead class="th">
         <th>Identificador</th>
         <th>Nombre Completo</th>
-        <th>CUIT</th>
-        <th>E-Mail</th>
-        <th>Mouse asignado?</th>
-        <th>Teclado asignado?</th>
-        <th>Auricular asignado?</th>
+        <th>Identificador Notebook</th>
+        <th>Campaña</th>
+        <th>Acciones</th>
     </thead>
     <tbody>
         {% for p in personas %}
         <tr>
             <td>{{ p.id }}</td>
             <td>{{ p.nombre_persona }} {{ p.apellido_persona }}</td>
-            <td>{{ p.cuit_persona }}</td>
-            <td>{{ p.email_persona }}</td>
+            <td>{{ p.id_notebook }}</td>
+            <td>{{ p.id_campania }}</td>
+            <td>
+                <button class="boton-actualizar">
+                    <i class="fa-solid fa-code-compare"></i> Actualizar
+                </button>
+                <button class="boton-eliminar">
+                    <i class="fa-solid fa-xmark"></i> Eliminar
+                </button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

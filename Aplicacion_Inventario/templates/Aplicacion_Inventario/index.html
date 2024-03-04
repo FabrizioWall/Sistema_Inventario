@@ -15,17 +15,28 @@
         <link rel="icon" type="img/x-con" href="{% static 'assets/img/pyd_logo.ico' %}"/>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khojki:wght@400..700&display=swap" rel="stylesheet">
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     
     <body class="sb-nav-fixed">
-
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <span class="navbar-text">Menu</span>
+            <span class="navbar-text d-none d-lg-block">Menú</span>            
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3 d-flex justify-content-center flex-grow-1" href="{% url 'index' %}">Sistema de Gestion de Inventario</a>
+            <div class="navbar-brand ps-3 d-flex justify-content-center flex-grow-1">
+                <span id="title-link" style="cursor: pointer;">Sistema de Gestion de Inventario</span>
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.getElementById("title-link").addEventListener("click", function() {
+                        window.location.href = "{% url 'index' %}";
+                    });
+                });
+            </script> 
             <!-- Navbar-->
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
@@ -36,23 +47,24 @@
                 </li>
             </ul>
         </nav>
-
+        
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <a class="nav-link" href="{% url 'index' %}" style="text-align:center; display: flex; align-items: center; justify-content: center;">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-house"></i></div>
                                 Inicio
                             </a>
                             <div class="sb-sidenav-menu-heading">PYD - Usuarios Registrados</div>
                             <a class="nav-link" href="{% url 'personas' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
                                 Usuarios
                             </a>
                             <div class="sb-sidenav-menu-heading">PYD-Notebooks y Perifericos</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNotebooks" aria-expanded="false" aria-controls="collapseNotebooks">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-laptop"></i></div>
                                 Notebooks
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
@@ -62,7 +74,7 @@
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePerifericos" aria-expanded="false" aria-controls="collapsePerifericos">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-hand"></i></div>
                                 Perifericos
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
@@ -73,7 +85,7 @@
                             </div>
                             <div class="sb-sidenav-menu-heading">PYD-Campañas</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCampanas" aria-expanded="false" aria-controls="collapseCampanas">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-money-check"></i></div>
                                 Campañas
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
@@ -81,7 +93,20 @@
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{% url 'campanias' %}">Ver Campañas en Sistema</a>
                                 </nav>
-                            </div>                            
+                            </div>
+                            
+                            <div class="sb-sidenav-menu-heading">PYD-Computadoras</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseComputadoras" aria-expanded="false" aria-controls="collapseComputadoras">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-computer"></i></div>
+                                Computadoras 
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseComputadoras" aria-labelledby="headingComputadoras" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="{% url 'computadoras' %}">Ver Computadoras en Sistema</a>
+                                </nav>
+                            </div>   
+
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -90,31 +115,51 @@
                     </div>
                 </nav>
             </div>
+            
             <div id="layoutSidenav_content">
                 
                 {% block contenido_pagina %}
                     <main>
                         <div class="container-fluid px-4">
-                                {% block titulo_pagina %}
-                                    <h1 class="mt-4"> Panel de contenido</h1>
-                                {% endblock titulo_pagina %}  
                             
-                            <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item active">Sistemas - Grupo PyD</li>
-                            </ol>
-                            <div class="row justify-content-center">
-                                <div class="col-xl-3 col-md-6">
-                                    <a href="tu_pagina_destino.html" class="card bg-primary text-white mb-4" style="background-image: url('{% static 'assets/img/fondo_negro_boton1.jpg' %}'); background-size: cover; text-decoration: none;">
-                                        <div class="card-body">Registrar Pedido de compra</div>
-                                    </a>
-                                </div>
-                                    
-                                <div class="col-xl-3 col-md-6">
-                                    <a href="tu_pagina_destino.html" class="card bg-primary text-white mb-4" style="background-image: url('{% static 'assets/img/fondo_negro_boton1.jpg' %}'); background-size: cover; text-decoration: none;">
-                                        <div class="card-body">Ver pedidos de compra</div>
-                                    </a>
-                                </div>
+                        </div>
+                        <div class="text-muted" style="display: flex; align-items: center;">
+                            <div>
+                                <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
                             </div>
+                            <div style="margin-left: auto; margin-right: 30px;">
+                                <h2 style="margin-top: 45px;">Gerencia de Sistemas</h2>
+                            </div>
+                        </div>
+                        
+                        <div  style= "text-align: justify; margin-left: 10px; margin-top: 60px">
+                            <p class="noto-serif">
+                                Este proyecto está creado con el fin de tener una mejor organización y orden en torno al inventario de la empresa.
+                                Tener un registro constante y, en base al mismo, sacar un analisis de stock, compras, etc.
+                            </p>
+                            <p class="noto-serif">
+                                La página y/o trabajo, como quiera decirse, no está hecho con un fin lucrativo, sino más bien con un fin de aprendizaje
+                                y aportar una ayuda extra al trabajo día a día, simplifiación y orden.
+                            </p>
+
+                            <h2 style="margin-top: 45px;">Tecnologías utilizadas</h2>
+
+                            <p class="noto-serif">
+                                Este proyecto está realizado como entrega final de Curso Python: Coderhouse.
+                                Las tecnologías usadas fueron:
+                                <ul>
+                                    <li>Python</li>
+                                    <li>Framework Django: HTML y CSS</li>
+                                    <li>Bootstrap: maquetado de HTML y CSS</li>
+                                </ul>
+                            </p>
+                            
+                            <div class="img-linea" >
+                                <img class= "logo-python" src="{% static 'assets/img/logo_python.png' %}" alt="" height="150">
+                                <img class= "logo-bootstrap" src="{% static 'assets/img/logo_bootstrap.png' %}" alt="" height="150">
+                                <img class= "logo-bootstrap" src="{% static 'assets/img/django-logo.png' %}" alt="" height="150">
+                            </div>
+                            
                         </div>
                     </main>
                 {% endblock contenido_pagina %}
@@ -124,6 +169,8 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Fabrizio Molinelli Wallaces - 2024</div>
                             <div>
+                                <a href="#">About me</a>
+                                &middot;
                                 <a href="#">Privacy Policy</a>
                                 &middot;
                                 <a href="#">Terms &amp; Conditions</a>
@@ -131,7 +178,6 @@
                         </div>
                     </div>
                 </footer>
-
             </div>
         </div>
 

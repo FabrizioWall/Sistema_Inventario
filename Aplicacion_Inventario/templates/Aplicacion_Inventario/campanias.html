@@ -1,23 +1,36 @@
 {% extends 'Aplicacion_Inventario/index.html' %}
+{% load static %}
 
 {% block titulo %}
     <title>SGI - Campañas</title>
 {% endblock titulo %}
 
-
-{% block titulo_pagina %}
-<h1 class="mt-4"> Panel de gestión de campañas</h1>
-{% endblock titulo_pagina %}
-
-
 {% block contenido_pagina %}
 
-<h1 class="mt-4" style="text-align:center"> Bienvenido/a a la gestión de Campañas </h1>
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Campañas</b></h1>
+        <h4 class="text-muted" style="font-size:30px;">Lista de campañas</h4>
+    </div>
+    <div style="margin-left: auto; margin-right: 30px;">
+        <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
+    </div>
+</div>
 <br>
-<div class="botones-container">
-    <a href="#" class="mi-boton">Agregar Campaña</a>
-    <a href="#" class="mi-boton">Eliminar Campaña</a>
-    <a href="#" class="mi-boton">Actualizar Campaña</a>
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <div class="box">
+            <input type="text" name="search" placeholder="Buscar..." class="src" autocomplete="off">
+        </div>
+    </div>
+    <div style="margin-left: auto; margin-right: 30px;">
+        <button class="boton-exportar">
+            <i class="fa-solid fa-file-export"></i> Exportar
+        </button>
+        <button class="boton-exportar">
+            <i class="fa-solid fa-plus"></i> Agregar Campaña
+        </button>
+    </div>
 </div>
 <br>
 <table class="table">
@@ -25,6 +38,7 @@
         <th>Identificador</th>
         <th>Nombre de Campaña</th>
         <th>Descripcion</th>
+        <th>Acciones</th>
     </thead>
     <tbody>
         {% for c in campanias %}
@@ -32,6 +46,14 @@
                 <td>{{ c.id }}</td>
                 <td>{{ c.nombre_campania }}</td>
                 <td>{{ c.descripcion_campania }}</td>
+                <td>
+                    <button class="boton-actualizar">
+                        <i class="fa-solid fa-code-compare"></i> Actualizar
+                    </button>
+                    <button class="boton-eliminar">
+                        <i class="fa-solid fa-xmark"></i> Eliminar
+                    </button>
+                </td>
             </tr>
         {% endfor %}
     </tbody>

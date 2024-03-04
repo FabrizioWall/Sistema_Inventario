@@ -15,14 +15,18 @@ def campanias(request):
 
 def perifericos(request):
     contexto = {
-        'mouses': Mouse.objects.all(),
-        'headsets': Headset.objects.all()
+        'mouses': Mouse.objects.order_by('id'),
+        'headsets': Headset.objects.order_by('id')
     }
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 def personas(request):
     contexto = {'personas': Persona.objects.all()}
     return render(request, 'Aplicacion_Inventario/personas.html', contexto)
+
+def computadoras_escritorio(request):
+    contexto = {'computadoras': Computadora.objects.all()}
+    return render(request, 'Aplicacion_Inventario/computadoras_escritorio.html', contexto)
 
 def agregar_notebook(request):
     contexto = {'notebooks': Notebook.objects.all()}
