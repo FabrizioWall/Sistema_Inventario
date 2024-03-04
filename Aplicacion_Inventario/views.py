@@ -5,6 +5,9 @@ from .models import *
 def index(request):
     return render(request, "Aplicacion_Inventario/index.html")
 
+def login(request):
+    return render(request, "Aplicacion_Inventario/login.html")
+
 def notebooks(request):
     contexto = {'notebooks': Notebook.objects.all()}
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)

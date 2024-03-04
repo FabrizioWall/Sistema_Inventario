@@ -8,6 +8,7 @@ urlpatterns = [
     path('usuarios/', personas, name="personas"),
     path('perifericos/', perifericos, name="perifericos"),
     path('computadoras/', computadoras_escritorio, name="computadoras"),
+    path('login/', login, name='login_sistema'),
     path('agregar-notebook/', agregar_notebook, name='agregar_notebook'),
     path('eliminar-notebook/', eliminar_notebook, name='eliminar_notebook'),
     path('actualizar-notebook/', actualizar_notebook, name='actualizar_notebook')
