@@ -10,7 +10,7 @@
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Perifericos</b></h1>
-        <h4 class="text-muted" style="font-size:30px;">Lista de perifericos</h4>
+        <h4 class="text-muted" style="font-size:30px;">Lista de Perifericos</h4>
     </div>
     <div style="margin-left: auto; margin-right: 30px;">
         <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
@@ -20,70 +20,155 @@
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <div class="box">
-            <input type="text" name="search" placeholder="Buscar..." class="src" autocomplete="off">
+            <form action="{% url 'perifericos' %}" method="get">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center;">
+                    <input type="text" name="buscar_mouse" placeholder="Marca de Mouse..." class="src" autocomplete="off" id="buscar_mouse"> 
+                    <input type="submit" value="Buscar" style="">
+                </div>
+            </form>
         </div>
     </div>
+
+    <div style="margin-left: auto; margin-right: auto; text-align: center;">
+        <div class="box">
+            <h2>Marca de Mouses</h2>
+        </div>
+    </div>
+
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
-            <i class="fa-solid fa-file-export"></i> Exportar
+            <i class="fa-solid fa-file-export"></i> Exportar Mouse
         </button>
-        <button class="boton-exportar">
-            <i class="fa-solid fa-plus"></i> Agregar Periferico
+        <button id="btn-abrir-modal" class="boton-exportar">
+            <i class="fa-solid fa-plus"></i> Agregar Mouse
         </button>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-contenido" style="text-align: center">
+            <span class="cerrar" id="btn-cerrar-modal">&times;</span> 
+            <form method="POST">
+                {% csrf_token %}
+                <table style="margin: 0 auto;">
+                    {{ miFormularioMouse.as_table }}
+                </table>
+                <input type="submit" value="Confirmar" style="margin-top: 10px">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<br>
+
+<div class="tabla-container">
+    <table class="table">
+        <thead class="th">
+            <tr>
+                <th>Identificador</th>
+                <th>Marca</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in mouses %}
+                <tr>
+                    <td>{{ m.id }}</td>
+                    <td>{{ m.marca_mouse }}</td>
+                    <td>
+                        <button class="boton-actualizar">
+                            <a href="{% url 'mouse_update' m.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-code-compare"></i> Actualizar
+                            </a>
+                        </button>
+                        <button class="boton-eliminar">
+                            <a href="{% url 'mouse_delete' m.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-xmark"></i> Eliminar
+                            </a>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>        
+    </table>
 </div>
 
 <br>
 
-<table class="table">
-    <thead class="th">
-        <th>Identificador</th>
-        <th>Marca</th>
-        <th>Acciones</th>
-    </thead>
-    <tbody>
-        {% for h in headsets %}
-            <tr>
-                <td>{{ h.id }}</td>
-                <td>{{ h.marca_headset }}</td>
-                <td>
-                    <button class="boton-actualizar">
-                        <i class="fa-solid fa-code-compare"></i> Actualizar
-                    </button>
-                    <button class="boton-eliminar">
-                        <i class="fa-solid fa-xmark"></i> Eliminar
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <div class="box">
+            <form action="{% url 'perifericos' %}" method="get">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center;">
+                    <input type="text" name="buscar_headset" placeholder="Marca de Headset..." class="src" autocomplete="off" id="buscar_headset"> 
+                    <input type="submit" value="Buscar" style="">
+                </div>
+            </form>
+        </div>
+    </div>
 
-<table class="table">
-    <thead class="th">
-        <th>Identificador</th>
-        <th>Marca</th>
-        <th>Acciones</th>
-    </thead>
-    <tbody>
-        {% for m in mouses %}
-            <tr>
-                <td>{{ m.id }}</td>
-                <td>{{ m.marca_mouse }}</td>
-                <td>
-                    <button class="boton-actualizar">
-                        <i class="fa-solid fa-code-compare"></i> Actualizar
-                    </button>
-                    <button class="boton-eliminar">
-                        <i class="fa-solid fa-xmark"></i> Eliminar
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div style="margin-left: auto; margin-right: auto; text-align: center;">
+        <div class="box">
+            <h2>Marca de Headsets</h2>
+        </div>
+    </div>
 
+    <div style="margin-left: auto; margin-right: 30px;">
+        <button class="boton-exportar">
+            <i class="fa-solid fa-file-export"></i> Exportar Headset
+        </button>
+        <button id="btn-abrir-modal-headset" class="boton-exportar">
+            <i class="fa-solid fa-plus"></i> Agregar Headset
+        </button>
+    </div>
+
+    <div id="modal-headset" class="modal">
+        <div class="modal-contenido" style="text-align: center">
+            <span class="cerrar" id="btn-cerrar-modal-headset">&times;</span> 
+            <form method="POST">
+                {% csrf_token %}
+                <table style="margin: 0 auto;">
+                    {{ miFormularioHeadset.as_table }}
+                </table>
+                <input type="submit" value="Confirmar" style="margin-top: 10px">
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="tabla-container">
+    <table class="table">
+        <thead class="th">
+            <tr>
+                <th>Identificador</th>
+                <th>Marca</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in headsets %}
+                <tr>
+                    <td>{{ h.id }}</td>
+                    <td>{{ h.marca_headset }}</td>
+                    <td>
+                        <button class="boton-actualizar">
+                            <a href="{% url 'headset_update' h.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-code-compare"></i> Actualizar
+                            </a>
+                        </button>
+                        <button class="boton-eliminar">
+                            <a href="{% url 'headset_delete' h.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-xmark"></i> Eliminar
+                            </a>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>      
+    </table>
+</div>
 <br>
-
 
 {% endblock contenido_pagina %}

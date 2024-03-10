@@ -47,7 +47,7 @@ class Notebook(models.Model):
     estado_notebook = models.CharField(max_length=100)
     
     def __str__(self):
-        return f'La notebook - Número de Serie: {self.numero_serie_notebook} y Nombre: {self.nombre_notebook}'
+        return f'Número de Serie: {self.numero_serie_notebook} y Nombre: {self.nombre_notebook}'
     
 class Computadora(models.Model):
     nombre_computadora = models.CharField(max_length=100)

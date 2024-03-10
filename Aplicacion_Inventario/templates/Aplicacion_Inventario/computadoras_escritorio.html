@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block titulo %}
-    <title>SGI - ComputadorasPYD</title>
+    <title>SGI - Computadoras PYD</title>
 {% endblock titulo %}
 
 {% block contenido_pagina %}
@@ -10,56 +10,90 @@
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Computadoras</b></h1>
-        <h4 class="text-muted" style="font-size:30px;">Lista de computadoras</h4>
+        <h4 class="text-muted" style="font-size:30px;">Lista de Computadoras</h4>
     </div>
     <div style="margin-left: auto; margin-right: 30px;">
         <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
     </div>
 </div>
 <br>
+
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <div class="box">
-            <input type="text" name="search" placeholder="Buscar..." class="src" autocomplete="off">
+            <form action="{% url 'computadoras' %}" method="get">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center;">
+                    <input type="text" name="buscar_computadora" placeholder="Nombre..." class="src" autocomplete="off" id="buscar_computadora"> 
+                    <input type="submit" value="Buscar" style="">
+                </div>
+            </form>
         </div>
     </div>
+
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
             <i class="fa-solid fa-file-export"></i> Exportar
         </button>
-        <button class="boton-exportar">
-            <i class="fa-solid fa-plus"></i> Agregar Notebook
+        <button id="btn-abrir-modal" class="boton-exportar">
+            <i class="fa-solid fa-plus"></i> Agregar Computadora
         </button>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-contenido" style="text-align: center">
+            <span class="cerrar" id="btn-cerrar-modal">&times;</span> 
+            <form method="POST">
+                {% csrf_token %}
+                <table style="margin: 0 auto;">
+                    {{ miFormularioComputadora.as_table }}
+                </table>
+                <input type="submit" value="Confirmar" style="margin-top: 10px">
+            </form>
+        </div>
+    </div>
+
+
 </div>
 <br>
 
-<table class="table">
-    <thead class="th">
-        <th>Identificador</th>
-        <th>Nombre</th>
-        <th>Estado</th>
-        <th>Version de Windows</th>
-        <th>Acciones</th>
-    </thead>
-    <tbody>
-        {% for c in computadoras %}
+<div class="tabla-container">
+    <table class="table">
+        <thead class="th">
             <tr>
-                <td>{{ c.id }}</td>
-                <td>{{ c.nombre_computadora }}</td>
-                <td>{{ c.estado_computadora_escritorio }}</td>
-                <td>{{ c.version_windows }}</td>
-                <td>
-                    <button class="boton-actualizar">
-                        <i class="fa-solid fa-code-compare"></i> Actualizar
-                    </button>
-                    <button class="boton-eliminar">
-                        <i class="fa-solid fa-xmark"></i> Eliminar
-                    </button>
-                </td>
+                <th>Identificador</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Version de Windows</th>
+                <th>Acciones</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for p in computadoras %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.nombre_computadora }}</td>
+                    <td>{{ p.estado_computadora_escritorio }}</td>
+                    <td>{{ p.version_windows }}</td>
+                    <td>
+                        <button class="boton-actualizar">
+                            <a href="{% url 'computadora_update' p.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-code-compare"></i> Actualizar
+                            </a>
+                        </button>
+                        <button class="boton-eliminar">
+                            <a href="{% url 'computadora_delete' p.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-xmark"></i> Eliminar
+                            </a>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
 
 {% endblock contenido_pagina %}

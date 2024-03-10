@@ -1,0 +1,38 @@
+{% extends 'Aplicacion_Inventario/index.html' %}
+{% load static %}
+
+{% block titulo %}
+    <title>SGI - Mouse</title>
+{% endblock titulo %}
+
+{% block contenido_pagina %}
+
+<div style="display: flex; align-items: center; margin-left: 30px;">
+    <div>
+        <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Marcas: Mouse</b></h1>
+        <h4 class="text-muted" style="font-size:30px;">Eliminar marca de Mouse</h4>
+    </div>
+    <div style="margin-left: auto; margin-right: 30px;">
+        <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
+    </div>
+</div>
+<br>
+
+<form action="" method="post" style="display: flex; flex-direction: column; align-items: center;">
+    {% csrf_token %}
+    <div style="text-align:center; margin-top: 20px;">
+        <h3>Se procede a eliminar la marca de Mouse: <p style="color:black"> {{ object }}</p></h3>
+    </div>
+    <div style="margin-top: 25px; display: flex; justify-content: center;">
+        <div style="margin-top: 25px; display: flex; justify-content: center;">
+            <input type="submit" value="Aceptar" 
+            style="background-color: #008000; color: white; 
+            border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">
+            <a href="{% url 'perifericos' %}" style="background-color: #FF0000; 
+            color: white; border: none; padding: 10px 20px; cursor: pointer; 
+            border-radius: 5px; text-decoration: none; margin-left: 10px;">Cancelar</a>
+        </div>
+    </div>
+</form>
+
+{% endblock contenido_pagina %}

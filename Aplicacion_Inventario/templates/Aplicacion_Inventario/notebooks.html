@@ -10,7 +10,7 @@
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <h1 class="mt-4" style="font-size:30px;"><b>Gestión de Notebooks</b></h1>
-        <h4 class="text-muted" style="font-size:30px;">Lista de notebooks</h4>
+        <h4 class="text-muted" style="font-size:30px;">Lista de Notebooks</h4>
     </div>
     <div style="margin-left: auto; margin-right: 30px;">
         <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
@@ -20,51 +20,80 @@
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <div class="box">
-            <input type="text" name="search" placeholder="Buscar..." class="src" autocomplete="off">
+            <form action="{% url 'notebooks' %}" method="get">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center;">
+                    <input type="text" name="buscar_notebook" placeholder="Nombre de Notebook..." class="src" autocomplete="off" id="buscar_notebook"> 
+                    <input type="submit" value="Buscar" style="">
+                </div>
+            </form>
         </div>
     </div>
+    
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
             <i class="fa-solid fa-file-export"></i> Exportar
         </button>
-        <button class="boton-exportar">
+        <button id="btn-abrir-modal" class="boton-exportar">
             <i class="fa-solid fa-plus"></i> Agregar Notebook
         </button>
     </div>
-</div>
-<br>
 
-<table class="table">
-    <thead class="th">
-        <th>Identificador</th>
-        <th>Marca</th>
-        <th>Nombre</th>
-        <th>Numero de Serie</th>
-        <th>Modelo</th>
-        <th>Estado Notebook</th>
-        <th>Acciones</th>
-    </thead>
-    <tbody>
-        {% for n in notebooks %}
+    <div id="modal" class="modal">
+        <div class="modal-contenido" style="text-align: center">
+            <span class="cerrar" id="btn-cerrar-modal">&times;</span> 
+            <form method="POST">
+                {% csrf_token %}
+                <table style="margin: 0 auto;">
+                    {{ miFormularioNotebook.as_table }}
+                </table>
+                <input type="submit" value="Confirmar" style="margin-top: 10px">
+            </form>
+        </div>
+    </div>
+</div>
+
+<br>
+<div class="tabla-container">
+    <table class="table">
+        <thead class="th">
             <tr>
-                <td>{{ n.id }}</td>
-                <td>{{ n.marca_notebook }}</td>
-                <td>{{ n.nombre_notebook }}</td>
-                <td>{{ n.numero_serie_notebook }}</td>
-                <td>{{ n.modelo_notebook }}</td>
-                <td>{{ n.estado_notebook }}</td>
-                <td>
-                    <button class="boton-actualizar">
-                        <i class="fa-solid fa-code-compare"></i> Actualizar
-                    </button>
-                    <button class="boton-eliminar">
-                        <i class="fa-solid fa-xmark"></i> Eliminar
-                    </button>
-                </td>
+                <th>Identificador</th>
+                <th>Marca</th>
+                <th>Nombre</th>
+                <th>Número de Serie</th>
+                <th>Modelo</th>
+                <th>Estado Notebook</th>
+                <th>Acciones</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for n in notebooks %}
+                <tr>
+                    <td>{{ n.id }}</td>
+                    <td>{{ n.marca_notebook }}</td>
+                    <td>{{ n.nombre_notebook }}</td>
+                    <td>{{ n.numero_serie_notebook }}</td>
+                    <td>{{ n.modelo_notebook }}</td>
+                    <td>{{ n.estado_notebook }}</td>
+                    <td>
+                        <button class="boton-actualizar">
+                            <a href="{% url 'notebook_update' n.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-code-compare"></i> Actualizar
+                            </a>
+                        </button>
+                        <button class="boton-eliminar">
+                            <a href="{% url 'notebook_delete' n.id %}" style="text-decoration: none; color:white">
+                                <i class="fa-solid fa-xmark"></i> Eliminar
+                            </a>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 
 {% endblock contenido_pagina %}
 
