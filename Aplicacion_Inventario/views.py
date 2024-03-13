@@ -1,17 +1,58 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, DeleteView
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .models import *
 from .forms import *
 
 # Create your views here.
 # ------------------------------------ Página Principal ---------------------------------------------
 def index(request):
-    return render(request, "Aplicacion_Inventario/index.html")
+    current_user = request.user
+    return render(request, 'Aplicacion_Inventario/index.html', {'current_user': current_user})
 
-# ------------------------------------ Login (Aún no implementado) ---------------------------------------------
-def login(request):
-    return render(request, "Aplicacion_Inventario/login.html")
+# ------------------------------------ Login ---------------------------------------------
+def login_request(request):
+    if request.method == 'POST':
+        usuario = request.POST['username']
+        clave = request.POST['password']
+        user = authenticate(request, username=usuario, password=clave)
+        
+        if not User.objects.filter(username=usuario).exists():
+            messages.error(request, "El usuario no éxiste en la base de datos. Regístrese.")
+            return redirect(reverse_lazy('login_sistema'))
+        elif user is not None:
+            login(request, user)
+            return redirect(reverse_lazy('index'))
+        else:
+            messages.error(request, "Contraseña incorrecta.")
+            return redirect(reverse_lazy('login_sistema'))
+        
+    else:
+        miFormLogin = AuthenticationForm()
+
+    return render(request, 'Aplicacion_Inventario/login.html', {'form': miFormLogin})
+
+# ------------------------------------ Registro ---------------------------------------------
+def registro_request(request):
+    if request.method == 'POST':
+        miFormRegistro = RegistroForm(request.POST)
+        
+        if miFormRegistro.is_valid():
+            usuario = miFormRegistro.cleaned_data.get('username')
+            miFormRegistro.save()
+            return redirect(reverse_lazy('login_sistema'))
+        else:
+            messages.error(request, "ERROR: Las contraseñas deben coincidir.")
+            return redirect(reverse_lazy('registro_sistema'))
+        
+    else:
+        miFormRegistro = RegistroForm()
+        
+    return render(request, 'Aplicacion_Inventario/registro.html', {'form': miFormRegistro})
 
 
 # ------------------------------------ Notebooks ---------------------------------------------
@@ -24,7 +65,7 @@ def notebooks(request):
         
         if miFormularioNotebook.is_valid():
             miFormularioNotebook.save()
-            return redirect('index')
+            return redirect(reverse_lazy('notebooks'))
         
     else:
         miFormularioNotebook = NotebookForm()
@@ -33,9 +74,15 @@ def notebooks(request):
     buscar_notebook = request.GET.get('buscar_notebook')
     if buscar_notebook:
         notebook = Notebook.objects.filter(nombre_notebook__icontains=buscar_notebook)
-        contexto = {'notebooks': notebook, 'miFormularioNotebook': miFormularioNotebook}
+        contexto = {
+                    'notebooks': notebook, 
+                    'miFormularioNotebook': miFormularioNotebook, 
+                    'current_user': request.user}
     else:
-        contexto = {'notebooks': Notebook.objects.all(), 'miFormularioNotebook': miFormularioNotebook}
+        contexto = {
+                    'notebooks': Notebook.objects.all().order_by('id'), 
+                    'miFormularioNotebook': miFormularioNotebook, 
+                    'current_user': request.user}
     
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)
 
@@ -44,10 +91,20 @@ class NotebookUpdate(UpdateView): #CRUD: Update
     fields = ['nombre_notebook', 'nombre_notebook', 'marca_notebook', 'numero_serie_notebook', 
                   'modelo_notebook', 'estado_notebook']
     success_url = reverse_lazy('notebooks')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 class NotebookDelete(DeleteView): #CRUD: Delete
     model = Notebook
     success_url = reverse_lazy('notebooks')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 
 # ------------------------------------ Campañas ---------------------------------------------
@@ -60,7 +117,7 @@ def campanias(request):
         
         if miFormularioCampania.is_valid():
             miFormularioCampania.save()
-            return redirect('index')
+            return redirect(reverse_lazy('campanias'))
     
     else:
         miFormularioCampania = CampaniaForm()
@@ -69,9 +126,15 @@ def campanias(request):
     buscar_campania = request.GET.get('buscar_campania')
     if buscar_campania:
         campania = Campania.objects.filter(nombre_campania__icontains=buscar_campania)
-        contexto = {'campanias': campania, 'miFormularioCampania': miFormularioCampania}
+        contexto = {
+                    'campanias': campania, 
+                    'miFormularioCampania': miFormularioCampania, 
+                    'current_user': request.user}
     else:
-        contexto = {'campanias': Campania.objects.all(), 'miFormularioCampania': miFormularioCampania}
+        contexto = {
+                    'campanias': Campania.objects.all().order_by('id'), 
+                    'miFormularioCampania': miFormularioCampania, 
+                    'current_user': request.user}
     
     
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
@@ -81,9 +144,19 @@ class CampaniaUpdate(UpdateView): #CRUD: Update
     fields = ['nombre_campania', 'descripcion_campania']
     success_url = reverse_lazy('campanias')
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
+    
 class CampaniaDelete(DeleteView): #CRUD: Delete
     model = Campania
     success_url = reverse_lazy('campanias')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 
 # ------------------------------------ PC's ---------------------------------------------
@@ -96,7 +169,7 @@ def computadoras_escritorio(request):
         
         if miFormularioComputadora.is_valid():
             miFormularioComputadora.save()
-            return redirect('index')
+            return redirect(reverse_lazy('computadoras'))
     
     else:
         miFormularioComputadora = ComputadoraForm()
@@ -105,9 +178,15 @@ def computadoras_escritorio(request):
     buscar_computadora = request.GET.get('buscar_computadora')
     if buscar_computadora:
         computadora = Computadora.objects.filter(nombre_computadora__icontains=buscar_computadora)
-        contexto = {'computadoras': computadora, 'miFormularioComputadora': miFormularioComputadora}
+        contexto = {
+                    'computadoras': computadora, 
+                    'miFormularioComputadora': miFormularioComputadora, 
+                    'current_user': request.user}
     else:
-        contexto = {'computadoras': Computadora.objects.all(), 'miFormularioComputadora': miFormularioComputadora}
+        contexto = {
+                    'computadoras': Computadora.objects.all().order_by('id'), 
+                    'miFormularioComputadora': miFormularioComputadora, 
+                    'current_user': request.user}
     
     
     return render(request, 'Aplicacion_Inventario/computadoras_escritorio.html', contexto)
@@ -117,9 +196,19 @@ class ComputadoraUpdate(UpdateView): #CRUD: Update
     fields = ['nombre_computadora', 'version_windows', 'estado_computadora_escritorio']
     success_url = reverse_lazy('computadoras')
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
+    
 class ComputadoraDelete(DeleteView): #CRUD: Delete
     model = Computadora
     success_url = reverse_lazy('computadoras')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 # ------------------------------------ Perifericos ---------------------------------------------
 
@@ -131,7 +220,7 @@ def perifericos(request):
         
         if miFormularioMouse.is_valid():
             miFormularioMouse.save()
-            return redirect('index')
+            return redirect(reverse_lazy('perifericos'))
     
     else:
         miFormularioMouse = MouseForm()
@@ -141,7 +230,7 @@ def perifericos(request):
     if buscar_mouse:
         mouses = Mouse.objects.filter(marca_mouse__icontains=buscar_mouse)
     else:
-        mouses = Mouse.objects.all()
+        mouses = Mouse.objects.all().order_by('id')
 
     # -------------------------- Create: HEADSET --------------------------------
     if request.method == 'POST':
@@ -149,7 +238,7 @@ def perifericos(request):
         
         if miFormularioHeadset.is_valid():
             miFormularioHeadset.save()
-            return redirect('index')
+            (reverse_lazy('perifericos'))
     
     else:
         miFormularioHeadset = HeadsetForm()
@@ -159,13 +248,14 @@ def perifericos(request):
     if buscar_headset:
         headsets = Headset.objects.filter(marca_headset__icontains=buscar_headset)
     else:
-        headsets = Headset.objects.all()
+        headsets = Headset.objects.all().order_by('id')
 
     contexto = {
         'mouses': mouses,
         'miFormularioMouse': miFormularioMouse,
         'headsets': headsets,
-        'miFormularioHeadset': miFormularioHeadset
+        'miFormularioHeadset': miFormularioHeadset,
+        'current_user': request.user
     }
     
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
@@ -175,10 +265,20 @@ class MouseUpdate(UpdateView): #CRUD: Update
     model = Mouse
     fields = ['marca_mouse']
     success_url = reverse_lazy('perifericos')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
     
 class MouseDelete(DeleteView): #CRUD: Delete
     model = Mouse
     success_url = reverse_lazy('perifericos')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 # ----- Headset ---------------------------------------------
 class HeadsetUpdate(UpdateView): #CRUD: Update
@@ -186,9 +286,19 @@ class HeadsetUpdate(UpdateView): #CRUD: Update
     fields = ['marca_headset']
     success_url = reverse_lazy('perifericos')
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
+    
 class HeadsetDelete(DeleteView): #CRUD: Delete
     model = Headset
     success_url = reverse_lazy('perifericos')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 
 # ------------------------------------ Personas ---------------------------------------------
@@ -200,7 +310,7 @@ def personas(request):
         miFormularioPersona = PersonaForm(request.POST)
         if miFormularioPersona.is_valid():
             miFormularioPersona.save()
-            return redirect('index')
+            return redirect(reverse_lazy('personas'))
     else:
         miFormularioPersona = PersonaForm()
 
@@ -209,7 +319,7 @@ def personas(request):
     if buscar_persona:
         personas = Persona.objects.filter(nombre_persona__icontains=buscar_persona)
     else:
-        personas = Persona.objects.all()
+        personas = Persona.objects.all().order_by('id')
 
     contexto = {
         'personas': personas,
@@ -218,8 +328,10 @@ def personas(request):
         'headsets': Headset.objects.all(),
         'mouses': Mouse.objects.all(),
         'computadoras': Computadora.objects.all(),
-        'miFormularioPersona': miFormularioPersona
+        'miFormularioPersona': miFormularioPersona,
+        'current_user': request.user
     }
+    
     return render(request, 'Aplicacion_Inventario/personas.html', contexto)
 
 class PersonaUpdate(UpdateView): #CRUD: Update
@@ -229,9 +341,19 @@ class PersonaUpdate(UpdateView): #CRUD: Update
                 'id_campania', 'id_headset', 'id_mouse']
     success_url = reverse_lazy('personas')
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
+    
 class PersonaDelete(DeleteView): #CRUD: Delete
     model = Persona
     success_url = reverse_lazy('personas')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_user'] = self.request.user
+        return context
 
 
 

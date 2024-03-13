@@ -1,10 +1,12 @@
-from django.urls import path, include
+from django.urls import path
 from .views import *
+
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     
     # ------------------------------------ Página Prncipal ---------------------------------------------
-    path('', index, name="index"),
+    path('PYDHome/', index, name="index"),
     
     # ------------------------------------ Notebooks ---------------------------------------------
     path('notebooks/', notebooks, name="notebooks"),
@@ -36,6 +38,8 @@ urlpatterns = [
     path('computadoras-update/<int:pk>/', ComputadoraUpdate.as_view(), name="computadora_update"),
     path('computadoras-delete/<int:pk>/', ComputadoraDelete.as_view(), name="computadora_delete"),
     
-    # ------------------------------------ Login (Aún no implementado) ---------------------------------------------
-    path('login/', login, name='login_sistema')
+    # ------------------------------------ Login, Logout, Registro ---------------------------------------------
+    path('', login_request, name='login_sistema'),
+    path('logout', LogoutView.as_view(template_name="Aplicacion_Inventario/logout.html"), name='logout_sistema'),
+    path('registro-usuario/', registro_request, name='registro_sistema')
 ]

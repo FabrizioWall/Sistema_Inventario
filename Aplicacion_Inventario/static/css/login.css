@@ -48,6 +48,8 @@ body{
     padding: 20px 45px 20px 20px;
 }
 
+
+
 .input-box input::placeholder{
     color: white;
 }
@@ -93,6 +95,10 @@ body{
     margin: 20px 0 15px;
 }
 
+.register-link a:hover {
+    text-decoration: underline;
+}
+
 .register-link p a{
     color: white;
     text-decoration: none;
@@ -102,6 +108,7 @@ body{
 .register-link p a:hover{
     text-decoration: underline;
 }
+
 
 
 

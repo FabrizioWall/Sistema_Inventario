@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGI - Registro</title>
+    <link rel="icon" type="img/x-con" href="{% static 'assets/img/pyd_logo.ico' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="{% static 'css/register.css' %}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khojki:wght@400..700&display=swap" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<style>
+    body{
+        background: url('{% static "assets/img/fondo_registerv2.jpg" %}') no-repeat;
+        background-size: cover;
+        background-position: center; 
+    }    
+</style>
+
+<body>
+    <div class="wrapper-register">
+        <form action="" method="post">
+            {% csrf_token %}
+            <h1>Panel de Registro</h1>
+            {% if messages %}
+            {% for message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+            <div class="input-box-register">
+                <div class="input-field-register">
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.apellido.label_tag }}
+                    {{ form.apellido }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                </div>
+            </div>
+            
+            <div class="input-box-register">
+                <div class="input-field-register">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                </div>
+            </div>
+            
+
+            <button type="submit" class="btn"> Completar Registro </button>
+        </form>
+    </div>
+</body>

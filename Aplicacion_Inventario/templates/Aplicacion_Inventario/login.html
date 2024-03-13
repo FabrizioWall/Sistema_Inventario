@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     {% load static %}
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGI - Login</title>
+    
+    {% block log_titulo %}        
+        <title>SGI - Login</title>
+    {% endblock log_titulo %}
     <link rel="icon" type="img/x-con" href="{% static 'assets/img/pyd_logo.ico' %}"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="{% static 'css/login.css' %}" rel="stylesheet" />
@@ -17,39 +20,55 @@
 
 <style>
     body{
-        background: url('{% static "assets/img/fondo_loginv3.jpg" %}') no-repeat;
+        background: url('{% static "assets/img/fondo_loginv4.jpg" %}') no-repeat;
         background-size: cover;
         background-position: center;
         
-    }    
+    }
+
+    .input-box {
+        position: relative;
+        margin-bottom: 15px;
+    }
 </style>
 
 <body>
-    <div class="wrapper-login">
-        <form action="">
-            <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 19px;">
-            <div class="input-box">
-                <input type="text" placeholder="Usuario" required>
-                <i style="position: absolute; right: 20px; top:50%; transform: translateY(-50%); font-size: 20px" class="fa-solid fa-user"></i>
-            </div>
-            <div class="input-box">
-                <input type="password" placeholder="Contraseña" required>
-                <i style="position: absolute; right: 20px; top:50%; transform: translateY(-50%); font-size: 20px" class="fa-solid fa-lock"></i>
-            </div>
+    {% block contenido_log %}
+        <div class="wrapper-login">
+            {% if messages %}
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            {% endif %}
 
-            <div class="remember-forgot">
-                <label><input type="checkbox">Recordar</label>
-                <a href="#">Olvidaste tu contraseña?</a>
-            </div>
+            <form action="{% url 'login_sistema' %}" method="post">
+                <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" 
+                        style="margin-top: 30px; margin-left: 19px;">
+                {% csrf_token %}
 
-            <button type="submit" class="btn-login">Ingresar</button>
+                <div class="input-box">
+                    <input type="text" name="username" placeholder="Usuario" required>
+                    <i style="position: absolute; right: 20px; top:50%; transform: translateY(-50%); font-size: 20px" class="fa-solid fa-user"></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                    <i style="position: absolute; right: 20px; top:50%; transform: translateY(-50%); font-size: 20px" class="fa-solid fa-lock"></i>
+                </div>
 
-            <div class="register-link">
-                <p>No tengo cuenta
-                    <a href="#">Registrarse</a>
-                </p>
-            </div>
-        </form>
-    </div>
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Recordar</label>
+                    <a href="#">Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Ingresar</button>
+
+                <div class="register-link">
+                    <p>No tengo cuenta <br>
+                        <a href="{% url 'registro_sistema' %}"> Registrarse </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    {% endblock contenido_log %}
 </body>
 </html>

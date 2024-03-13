@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.wrapper-register{
+    margin-top: 35px;
+    width: 750px;
+    height: 500px;
+    background: rgba(255, 255, 255, .1);
+    border: 2px solid rgba(255, 255, 255, .2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    backdrop-filter: blur(50px);
+    border-radius: 10px;
+    color: #fff;
+    padding: 40px 35px 55px;
+}
+
+.wrapper-register h1{
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.wrapper-register .input-box-register{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.input-box-register .input-field-register:nth-child(1),
+.input-box-register .input-field-register:nth-child(2) {
+    width: 48%; /* Ancho del 48% para cada campo */
+}
+
+.input-box-register .input-field-register:last-child {
+    margin-bottom: 20px; /* Margen inferior solo para el último campo */
+}
+
+.input-box-register .input-field-register{
+    position: relative;
+    width: 100%; /* Ancho del 100% para ocupar una sola columna */
+    margin: 0px 0; /* Ajuste de margen */
+}
+
+
+
+.input-box-register .input-field-register input{
+    width: 100%;
+    height: 70%;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+    border-radius: 6px;
+    padding-left: 40px;
+    padding: 15px 15px 15px 40px;
+}
+
+.input-box-register .input-field-register input::placeholder {
+    color: #ff0909;
+    text-align: center; /* Alinea el texto del placeholder al centro */
+    position: absolute; /* Establece la posición absoluta para el placeholder */
+    left: 100%; /* Mueve el placeholder hacia la mitad del input */
+    transform: translateX(-50%); /* Centra horizontalmente el placeholder */
+}
+
+.input-box-register .input-field-register i{
+    position: absolute;
+    top: 20%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+
+.wrapper-register .btn{
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+
+
+
+
+

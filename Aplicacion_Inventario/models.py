@@ -1,6 +1,14 @@
 from django.db import models
 
 # Create your models here.
+class Usuario(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email_user = models.EmailField(max_length=100)
+    username = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=10)
+    password2 = models.CharField(max_length=10)
+    
 class Campania(models.Model):
     nombre_campania = models.CharField(max_length=100)
     descripcion_campania = models.CharField(max_length=250, null=True, blank="True", default='Sin descripción')
