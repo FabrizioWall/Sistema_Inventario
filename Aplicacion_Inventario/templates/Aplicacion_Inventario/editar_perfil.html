@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGI - Edición de Perfil</title>
+    <link rel="icon" type="img/x-con" href="{% static 'assets/img/pyd_logo.ico' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="{% static 'css/register.css' %}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khojki:wght@400..700&display=swap" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<style>
+    body{
+        background: url('{% static "assets/img/fondo_registerv2.jpg" %}') no-repeat;
+        background-size: cover;
+        background-position: center; 
+    }
+    .input-field-register a {
+        color: red; /* Cambia el color del enlace dentro de .input-field-register */
+    }
+</style>
+
+<body>
+    <div style="height: 540px" class="wrapper-register">
+        <form action="" method="post">
+            {% csrf_token %}
+            <h1>Panel de Edición</h1>
+
+            <div class="input-box-register">
+                <div class="input-field-register">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                </div>
+                <div class="input-field-register">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                        
+                </div>
+            </div>
+            
+            <div class="input-box-register">
+                <div class="input-field-register">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+            </div>
+
+            <div class="input-field-register">
+                {{ form.password.help_text|safe }}
+            </div>
+
+            <button style= "margin-top:10px" type="submit" class="btn"> Completar Edición </button>
+        </form>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'index' %}" style="background-color: green; 
+            color: white; border: none; padding: 10px 20px; cursor: pointer; 
+            border-radius: 5px; text-decoration: none; margin-top: 7px; display: block;">
+                Volver a inicio
+            </a>
+        </div>
+    </div>
+</body>

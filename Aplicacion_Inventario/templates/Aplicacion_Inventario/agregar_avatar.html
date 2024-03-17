@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGI - Avatar</title>
+    <link rel="icon" type="img/x-con" href="{% static 'assets/img/pyd_logo.ico' %}"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="{% static 'css/register.css' %}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khojki:wght@400..700&display=swap" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<style>
+    body{
+        background: url('{% static "assets/img/fondo_registerv2.jpg" %}') no-repeat;
+        background-size: cover;
+        background-position: center; 
+    }    
+</style>
+
+<body>
+    <div class="wrapper-register">
+        <form action="" method="post" endtype="multipart/form_data">
+            {% csrf_token %}
+            <h1>Cambiar Avatar</h1>
+        
+            <div class="input-box-register">
+                {{ form.as_table }}
+            </div>
+        
+            <button type="submit" class="btn"> Confirmar Avatar </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'index' %}" style="background-color: green; 
+            color: white; border: none; padding: 10px 20px; cursor: pointer; 
+            border-radius: 5px; text-decoration: none; margin-top: 7px; display: block;">
+                Volver a inicio
+            </a>
+        </div>
+    </div>
+</body>

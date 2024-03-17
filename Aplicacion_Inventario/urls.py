@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     
-    # ------------------------------------ Página Prncipal ---------------------------------------------
+    # ------------------------------------ Página Prncipal --------------------------------------
     path('PYDHome/', index, name="index"),
     
     # ------------------------------------ Notebooks ---------------------------------------------
@@ -38,8 +38,16 @@ urlpatterns = [
     path('computadoras-update/<int:pk>/', ComputadoraUpdate.as_view(), name="computadora_update"),
     path('computadoras-delete/<int:pk>/', ComputadoraDelete.as_view(), name="computadora_delete"),
     
-    # ------------------------------------ Login, Logout, Registro ---------------------------------------------
+    # ----------------------------- Login, Logout, Registro -----------------------------
     path('', login_request, name='login_sistema'),
-    path('logout', LogoutView.as_view(template_name="Aplicacion_Inventario/logout.html"), name='logout_sistema'),
-    path('registro-usuario/', registro_request, name='registro_sistema')
+    path('logout/', LogoutView.as_view(template_name="Aplicacion_Inventario/logout.html"), 
+            name='logout_sistema'),
+    path('registro-usuario/', registro_request, name='registro_sistema'),
+    
+    # ---------------------- Exportar ------------------------
+    path('exportar/', exportar, name='exportar_datos_csv'),
+    # ---------------------- Edición Perfil, Cambio Clave ------------------------
+    path('perfil/', profile, name='edicion_perfil'),
+    path('<int:pk>/password/', CambiarClave.as_view(), name='cambiar_clave'),
+    path('agregar_avatar/', agregar_avatar, name='agregar_avatar')
 ]

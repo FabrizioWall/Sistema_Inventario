@@ -1,18 +1,40 @@
+from django.views.generic import UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import UpdateView, DeleteView
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout, authenticate
+from django.http import HttpResponse
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
+
 from .models import *
 from .forms import *
 
+from datetime import datetime
+current_date = datetime.now().date() 
+import csv
+
 # Create your views here.
-# ------------------------------------ Página Principal ---------------------------------------------
-def index(request):
-    current_user = request.user
-    return render(request, 'Aplicacion_Inventario/index.html', {'current_user': current_user})
+# ------------------------------------ Experimental ---------------------------------------------
+# Exportar
+def exportar(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="datos.csv"'
+
+    personas = Persona.objects.all()  # Obtén todas las personas (o puedes filtrar según tus necesidades)
+
+    writer = csv.writer(response)
+    writer.writerow(['Identificador', 'Nombre', 'Notebook', 'Campaña asignada'])  # Encabezados de columna
+
+    for persona in personas:
+        writer.writerow([persona.id, persona.nombre_persona + ' ' + persona.apellido_persona, persona.id_notebook, persona.id_campania])
+
+    return response
+
 
 # ------------------------------------ Login ---------------------------------------------
 def login_request(request):
@@ -26,6 +48,16 @@ def login_request(request):
             return redirect(reverse_lazy('login_sistema'))
         elif user is not None:
             login(request, user)
+            
+            #______________Avatar
+            try:
+                avatar = Avatar.objects.get(user=request.user.id).imagen.url
+            except:
+                avatar = '/media/avatares/default.png'
+            finally:
+                request.session['avatar'] = avatar
+            
+            
             return redirect(reverse_lazy('index'))
         else:
             messages.error(request, "Contraseña incorrecta.")
@@ -35,6 +67,7 @@ def login_request(request):
         miFormLogin = AuthenticationForm()
 
     return render(request, 'Aplicacion_Inventario/login.html', {'form': miFormLogin})
+
 
 # ------------------------------------ Registro ---------------------------------------------
 def registro_request(request):
@@ -55,9 +88,87 @@ def registro_request(request):
     return render(request, 'Aplicacion_Inventario/registro.html', {'form': miFormRegistro})
 
 
+# ------------------------------------ Edición de perfil ---------------------------------------------
+@login_required
+def profile(request):
+    usuario = request.user
+    print("Valor de usuario:", usuario)
+    
+    if request.method == 'POST':
+        print("Datos POST:", request.POST)
+        
+        formEdit = UserEditForm(request.POST)
+        
+
+        if formEdit.is_valid():
+            user = User.objects.get(username=usuario)
+            
+            user.email = formEdit.cleaned_data.get('email')
+            user.first_name = formEdit.cleaned_data.get('first_name')
+            user.last_name = formEdit.cleaned_data.get('last_name')
+            
+            formEdit.save()
+            messages.success(request, 'Tu perfil ha sido actualizado.')
+            return redirect(reverse_lazy('edicion_perfil'))
+    else:
+        formEdit = UserEditForm(instance=usuario)
+
+    return render(request, 'Aplicacion_Inventario/editar_perfil.html', {'form': formEdit})
+
+
+# ------------------------------------ Cambio de clave ---------------------------------------------
+class CambiarClave(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'Aplicacion_Inventario/cambio_clave.html'
+    success_url = reverse_lazy('index')
+
+
+# ------------------------------------ Agregar Avatar ---------------------------------------------
+@login_required
+def agregar_avatar(request):
+    if request.method == 'POST':
+        formAvatar = AvatarForm(request.POST)
+        
+        if formAvatar.is_valid():
+            user = User.objects.get(username=request.user)
+            #___Borrar avatares viejos
+            avatarViejo = Avatar.objects.filter(user=request.user)
+            if len(avatarViejo) > 0:
+                for i in range(len(avatarViejo)):
+                    avatarViejo[i].delete()
+            #-------------------------------------------------------
+            avatar = Avatar(user=request.user, 
+                            imagen= formAvatar.cleaned_data['imagen'])
+            avatar.save()
+            imagen = Avatar.objects.get(user=request.user.id).imagen.url
+            request.session['avatar'] = imagen
+            print(f"{imagen}")
+            return redirect(reverse_lazy('index'))
+    else:
+        formAvatar = AvatarForm()
+        
+    return render(request, 'Aplicacion_Inventario/agregar_avatar.html', {'form': formAvatar})
+        
+
+# ------------------------------------ Página Principal ---------------------------------------------
+@login_required
+def index(request):
+    contexto = {
+        'current_user': request.user,
+        'conteo_personas': Persona.objects.count(),
+        'conteo_notebooks': Notebook.objects.count(),
+        'conteo_computadoras': Computadora.objects.count(),
+        'conteo_marcas_perifericos': (Mouse.objects.count()) + (Headset.objects.count()),
+        'conteo_campanias': Campania.objects.count(),
+        'current_date': current_date 
+    }
+
+    return render(request, 'Aplicacion_Inventario/index.html', contexto)
+
+
 # ------------------------------------ Notebooks ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
+@login_required
 def notebooks(request):
     # -------------------------- Create --------------------------------
     if request.method == 'POST':
@@ -77,16 +188,18 @@ def notebooks(request):
         contexto = {
                     'notebooks': notebook, 
                     'miFormularioNotebook': miFormularioNotebook, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     else:
         contexto = {
                     'notebooks': Notebook.objects.all().order_by('id'), 
                     'miFormularioNotebook': miFormularioNotebook, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)
 
-class NotebookUpdate(UpdateView): #CRUD: Update
+class NotebookUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Notebook
     fields = ['nombre_notebook', 'nombre_notebook', 'marca_notebook', 'numero_serie_notebook', 
                   'modelo_notebook', 'estado_notebook']
@@ -97,7 +210,7 @@ class NotebookUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
 
-class NotebookDelete(DeleteView): #CRUD: Delete
+class NotebookDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Notebook
     success_url = reverse_lazy('notebooks')
     
@@ -110,6 +223,7 @@ class NotebookDelete(DeleteView): #CRUD: Delete
 # ------------------------------------ Campañas ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
+@login_required
 def campanias(request):
     # -------------------------- Create --------------------------------
     if request.method == 'POST':
@@ -129,17 +243,19 @@ def campanias(request):
         contexto = {
                     'campanias': campania, 
                     'miFormularioCampania': miFormularioCampania, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     else:
         contexto = {
                     'campanias': Campania.objects.all().order_by('id'), 
                     'miFormularioCampania': miFormularioCampania, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     
     
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
 
-class CampaniaUpdate(UpdateView): #CRUD: Update
+class CampaniaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Campania
     fields = ['nombre_campania', 'descripcion_campania']
     success_url = reverse_lazy('campanias')
@@ -149,7 +265,7 @@ class CampaniaUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
     
-class CampaniaDelete(DeleteView): #CRUD: Delete
+class CampaniaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Campania
     success_url = reverse_lazy('campanias')
     
@@ -162,6 +278,7 @@ class CampaniaDelete(DeleteView): #CRUD: Delete
 # ------------------------------------ PC's ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
+@login_required
 def computadoras_escritorio(request):
     # -------------------------- Create --------------------------------
     if request.method == 'POST':
@@ -181,17 +298,19 @@ def computadoras_escritorio(request):
         contexto = {
                     'computadoras': computadora, 
                     'miFormularioComputadora': miFormularioComputadora, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     else:
         contexto = {
                     'computadoras': Computadora.objects.all().order_by('id'), 
                     'miFormularioComputadora': miFormularioComputadora, 
-                    'current_user': request.user}
+                    'current_user': request.user,
+                    'current_date': current_date}
     
     
     return render(request, 'Aplicacion_Inventario/computadoras_escritorio.html', contexto)
 
-class ComputadoraUpdate(UpdateView): #CRUD: Update
+class ComputadoraUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Computadora
     fields = ['nombre_computadora', 'version_windows', 'estado_computadora_escritorio']
     success_url = reverse_lazy('computadoras')
@@ -201,7 +320,7 @@ class ComputadoraUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
     
-class ComputadoraDelete(DeleteView): #CRUD: Delete
+class ComputadoraDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Computadora
     success_url = reverse_lazy('computadoras')
     
@@ -213,6 +332,7 @@ class ComputadoraDelete(DeleteView): #CRUD: Delete
 # ------------------------------------ Perifericos ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
+@login_required
 def perifericos(request):
     # -------------------------- Create: MOUSE --------------------------------
     if request.method == 'POST':
@@ -255,13 +375,14 @@ def perifericos(request):
         'miFormularioMouse': miFormularioMouse,
         'headsets': headsets,
         'miFormularioHeadset': miFormularioHeadset,
-        'current_user': request.user
+        'current_user': request.user,
+        'current_date': current_date
     }
     
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 # ----- Mouse ---------------------------------------------
-class MouseUpdate(UpdateView): #CRUD: Update
+class MouseUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Mouse
     fields = ['marca_mouse']
     success_url = reverse_lazy('perifericos')
@@ -271,7 +392,7 @@ class MouseUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
     
-class MouseDelete(DeleteView): #CRUD: Delete
+class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Mouse
     success_url = reverse_lazy('perifericos')
     
@@ -281,7 +402,7 @@ class MouseDelete(DeleteView): #CRUD: Delete
         return context
 
 # ----- Headset ---------------------------------------------
-class HeadsetUpdate(UpdateView): #CRUD: Update
+class HeadsetUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Headset
     fields = ['marca_headset']
     success_url = reverse_lazy('perifericos')
@@ -291,7 +412,7 @@ class HeadsetUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
     
-class HeadsetDelete(DeleteView): #CRUD: Delete
+class HeadsetDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Headset
     success_url = reverse_lazy('perifericos')
     
@@ -304,6 +425,7 @@ class HeadsetDelete(DeleteView): #CRUD: Delete
 # ------------------------------------ Personas ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
+@login_required
 def personas(request):
     # -------------------------- Create --------------------------------
     if request.method == 'POST':
@@ -329,12 +451,13 @@ def personas(request):
         'mouses': Mouse.objects.all(),
         'computadoras': Computadora.objects.all(),
         'miFormularioPersona': miFormularioPersona,
-        'current_user': request.user
+        'current_user': request.user,
+        'current_date': current_date
     }
     
     return render(request, 'Aplicacion_Inventario/personas.html', contexto)
 
-class PersonaUpdate(UpdateView): #CRUD: Update
+class PersonaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Persona
     fields = ['nombre_persona', 'apellido_persona', 'cuit_persona', 'email_persona', 
                 'id_notebook', 'id_computadora_escritorio', 
@@ -346,7 +469,7 @@ class PersonaUpdate(UpdateView): #CRUD: Update
         context['current_user'] = self.request.user
         return context
     
-class PersonaDelete(DeleteView): #CRUD: Delete
+class PersonaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     model = Persona
     success_url = reverse_lazy('personas')
     
