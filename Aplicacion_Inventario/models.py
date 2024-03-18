@@ -2,13 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Avatar(models.Model):
-    imagen = models.ImageField(upload_to="avatares")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.user} {self.imagen}"
-    
 class Campania(models.Model):
     nombre_campania = models.CharField(max_length=100)
     descripcion_campania = models.CharField(max_length=250, null=True, blank="True", default='Sin descripción')
@@ -81,3 +74,10 @@ class Persona(models.Model):
     
     def __str__(self):
         return f'{self.nombre_persona}, {self.apellido_persona}'
+    
+class Avatar(models.Model):
+    imagen = models.ImageField(upload_to="avatares")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.user} {self.imagen}"

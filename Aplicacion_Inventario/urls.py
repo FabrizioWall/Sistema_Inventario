@@ -1,7 +1,6 @@
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from .views import *
-
-from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     
@@ -26,10 +25,10 @@ urlpatterns = [
     # ------------------------------------ Perifericos ---------------------------------------------
     path('perifericos/', perifericos, name="perifericos"),
     
-    # ----- Mouse ---------------------------------------------
+    # _____ Mouse ---------------------------------------------
     path('mouses-update/<int:pk>/', MouseUpdate.as_view(), name="mouse_update"),
     path('mouses-delete/<int:pk>/', MouseDelete.as_view(), name="mouse_delete"),
-    # ----- Headset ---------------------------------------------
+    # _____ Headset ---------------------------------------------
     path('headsets-update/<int:pk>/', HeadsetUpdate.as_view(), name="headset_update"),
     path('headsets-delete/<int:pk>/', HeadsetDelete.as_view(), name="headset_delete"),
     
@@ -44,9 +43,15 @@ urlpatterns = [
             name='logout_sistema'),
     path('registro-usuario/', registro_request, name='registro_sistema'),
     
-    # ---------------------- Exportar ------------------------
-    path('exportar/', exportar, name='exportar_datos_csv'),
-    # ---------------------- Edición Perfil, Cambio Clave ------------------------
+    # ------------------------------------ Exportar ---------------------------------------------
+    path('exportar-personas/', exportar_personas, name='exportar_personas'),
+    path('exportar-notebooks/', exportar_notebooks, name='exportar_notebooks'),
+    path('exportar-computadoras/', exportar_computadoras, name='exportar_computadoras'),
+    path('exportar-headset/', exportar_headset, name='exportar_headset'),
+    path('exportar-mouse/', exportar_mouse, name='exportar_mouse'),
+    path('exportar-campañas/', exportar_campanias, name='exportar_campanias'),
+    
+    # ---------------------- Edición Perfil, Cambio Clave, Cambio Avatar ------------------------
     path('perfil/', profile, name='edicion_perfil'),
     path('<int:pk>/password/', CambiarClave.as_view(), name='cambiar_clave'),
     path('agregar_avatar/', agregar_avatar, name='agregar_avatar')

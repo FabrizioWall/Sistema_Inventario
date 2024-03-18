@@ -32,7 +32,9 @@
     
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
-            <i class="fa-solid fa-file-export"></i> Exportar
+            <a href="{% url 'exportar_notebooks' %}" style="text-decoration: none; color:black">
+                <i class="fa-solid fa-file-export"></i> Exportar
+            </a>
         </button>
         <button id="btn-abrir-modal" class="boton-exportar">
             <i class="fa-solid fa-plus"></i> Agregar Notebook

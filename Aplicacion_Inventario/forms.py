@@ -1,8 +1,8 @@
-from django import forms
 from .models import *
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
+from django import forms
 
 class AvatarForm(forms.Form):
     imagen = forms.ImageField(required=True)
@@ -16,7 +16,6 @@ class UserEditForm(UserChangeForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
         
-
 class RegistroForm(UserCreationForm):
     nombre = forms.CharField(required=True)
     apellido = forms.CharField(required=True)
@@ -28,6 +27,7 @@ class RegistroForm(UserCreationForm):
         model = User
         fields = ['username', 'nombre', 'apellido', 'email', 'password1', 'password2' ]
 
+# ---------------------------- Form Modelos ---------------------------------------------
 class NotebookForm(forms.ModelForm):
     class Meta:
         model = Notebook

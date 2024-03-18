@@ -3,7 +3,6 @@
     {% block head %}
         <head>
             {% load static %}
-
             <meta charset="utf-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -23,7 +22,7 @@
     {% endblock head %}
         
 
-    
+    <!--Primera validación para que usuari no acceda sin loguearse a funcionalidades-->
     {% if user.is_authenticated %}
         <body class="sb-nav-fixed">
             <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -49,17 +48,15 @@
                             <li>
                                 <a href="{% url 'edicion_perfil' %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn-nav">Perfil</button>
+                                    <button type="submit" class="btn-nav"> Editar Perfil</button>
                                 </a>
                             </li>        
                             <li>
                                 <form action="{% url 'logout_sistema' %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn-nav">Logout</button>
+                                    <button type="submit" class="btn-nav">Salir</button>
                                 </form>
                             </li>
-
-
                         </ul>
                     </li>
                 </ul>
@@ -129,9 +126,10 @@
                         
                         <div class="sb-sidenav-footer">
                             <div class="small">Ingresado en sistema como: </div>
-                            <b style="color:red">[{{ current_user.username }}]</b>
-                            <div>
-                                <a href="{% url 'agregar_avatar' %}"> <img src="{{ request.session }}"> </a>
+                            <b style="color:green">[{{ current_user.username }}]</b>
+                            <a style="margin-left:20px;"href="{% url 'agregar_avatar' %}"> 
+                                 <img src="{{ request.session.avatar }}" style="height:40px;"> 
+                            </a>
                         </div>
                     </nav>
                 </div>
@@ -148,25 +146,48 @@
                                 </div>
                             </div>
                             
-                            <div  style= "text-align: justify; margin-left: 10px; margin-top: 60px">
-                                <p class="noto-serif">
+                            <div  style= "text-align:justify; margin-left: 10px; margin-top: 60px">
+                                <p style= "text-align:center;" class="noto-serif">
                                     Este proyecto está creado con el fin de tener una mejor organización y orden en torno al inventario de la empresa.
                                     Tener un registro constante y, en base al mismo, sacar un analisis de stock, compras, etc.
                                 </p>
-                                <p class="noto-serif">
+                                <p style= "text-align:center;" class="noto-serif">
                                     La página y/o trabajo, como quiera decirse, no está hecho con un fin lucrativo, sino más bien con un fin de aprendizaje
                                     y aportar una ayuda extra al trabajo día a día, simplifiación y orden.
                                 </p>
 
-                                <h2 style="margin-top: 45px;">Tecnologías utilizadas</h2>
+                                <h2 style="margin-top: 45px; text-align:center;">Tecnologías utilizadas</h2>
 
                                 <p class="noto-serif">
                                     Este proyecto está realizado como entrega final de Curso Python: Coderhouse.
-                                    Las tecnologías usadas fueron:
+                                    Las Tecnologías usadas fueron:
                                     <ul>
                                         <li>Python</li>
-                                        <li>Framework Django: HTML y CSS</li>
-                                        <li>Bootstrap: maquetado de HTML y CSS</li>
+                                        <li>Framework Django: DTL (Django Template Language)</li>
+                                        <li>Bootstrap: maquetado de HTML y CSS, sitio responsive</li>
+                                        <li>Se ha utilizado JS</li>
+                                    </ul>
+                                    Fuentes de donde saqué información adicional:
+                                    <ul>
+                                        <li>Videos de Youtube: explicación de JS, estilización CSS y HTML</li>
+                                        <li>
+                                            <a href="https://forum.djangoproject.com/" target="_blank">
+                                                Foro de django
+                                            </a>
+                                            : Uso de DTL y especialmente para exportar datos CSV
+                                        </li>
+                                        <li>
+                                            <a href="https://pythonguides.com/" target="_blank">
+                                                Python Guides
+                                            </a>
+                                            : Especialmente para la fecha en Footer y otras funcionalidades aplicables
+                                        </li>
+                                        <li>
+                                            <a href="https://developer.mozilla.org/es/docs/Learn/Server-side/Django" target="_blank">
+                                                MDN Docs
+                                            </a>
+                                            : Para aprender funcionalidades Django
+                                        </li>
                                     </ul>
                                 </p>
                                 
@@ -229,7 +250,7 @@
                     <footer class="py-4 bg-light mt-auto">
                         <div class="container-fluid px-4">
                             <div class="d-flex align-items-center justify-content-between small">
-                                <div class="text-muted">Copyright &copy; Fabrizio Molinelli Wallaces - 2024</div>
+                                <div class="text-muted">Aplicación Web hecha por Fabrizio Molinelli Wallaces - 2024</div>
                                 <div>
                                     <b style="color:red">[{{ current_date }}]</b>
                                 </div>
@@ -306,9 +327,12 @@
             </style>
         </body>
     {% else %}
-    <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="position: absolute; top: 30%; left: 49%; transform: translate(-50%, -50%);"">
+    <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="position: absolute; top: 30%; left: 49%; transform: translate(-50%, -50%);">
     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-        <a href="{% url 'login_sistema' %}" style="display: inline-block; padding: 10px 70px; background-color: #007bff; color: #fff; border: 2px solid #007bff; border-radius: 5px; text-decoration: none;">Tiene que volver a loguearse.</a>
+        <a href="{% url 'login_sistema' %}" style="display: inline-block; padding: 10px 70px; background-color: #007bff; 
+                    color: #fff; border: 2px solid #007bff; 
+                    border-radius: 5px; text-decoration: none;">Tiene que volver a loguearse.
+        </a>
     </div>
     {% endif %}
 </html>

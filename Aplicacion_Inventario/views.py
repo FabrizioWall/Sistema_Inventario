@@ -15,26 +15,26 @@ from .models import *
 from .forms import *
 
 from datetime import datetime
-current_date = datetime.now().date() 
 import csv
+current_date = datetime.now().date() 
 
 # Create your views here.
 # ------------------------------------ Experimental ---------------------------------------------
 # Exportar
-def exportar(request):
+def exportar_modelo(request, modelo, campos, nombre_archivo):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="datos.csv"'
+    response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}.csv"'
 
-    personas = Persona.objects.all()  # Obtén todas las personas (o puedes filtrar según tus necesidades)
+    elementos = modelo.objects.all()
 
     writer = csv.writer(response)
-    writer.writerow(['Identificador', 'Nombre', 'Notebook', 'Campaña asignada'])  # Encabezados de columna
+    writer.writerow(campos)
 
-    for persona in personas:
-        writer.writerow([persona.id, persona.nombre_persona + ' ' + persona.apellido_persona, persona.id_notebook, persona.id_campania])
+    for elemento in elementos:
+        datos_elemento = [getattr(elemento, campo) for campo in campos]
+        writer.writerow(datos_elemento)
 
     return response
-
 
 # ------------------------------------ Login ---------------------------------------------
 def login_request(request):
@@ -49,25 +49,21 @@ def login_request(request):
         elif user is not None:
             login(request, user)
             
-            #______________Avatar
+            #______________Config. de Avatar
             try:
                 avatar = Avatar.objects.get(user=request.user.id).imagen.url
             except:
-                avatar = '/media/avatares/default.png'
+                avatar = '/media/avatares/default.jpg'
             finally:
                 request.session['avatar'] = avatar
-            
-            
             return redirect(reverse_lazy('index'))
         else:
             messages.error(request, "Contraseña incorrecta.")
             return redirect(reverse_lazy('login_sistema'))
-        
     else:
         miFormLogin = AuthenticationForm()
 
     return render(request, 'Aplicacion_Inventario/login.html', {'form': miFormLogin})
-
 
 # ------------------------------------ Registro ---------------------------------------------
 def registro_request(request):
@@ -80,26 +76,19 @@ def registro_request(request):
             return redirect(reverse_lazy('login_sistema'))
         else:
             messages.error(request, "ERROR: Las contraseñas deben coincidir.")
-            return redirect(reverse_lazy('registro_sistema'))
-        
+            return redirect(reverse_lazy('registro_sistema')) 
     else:
         miFormRegistro = RegistroForm()
         
     return render(request, 'Aplicacion_Inventario/registro.html', {'form': miFormRegistro})
 
-
 # ------------------------------------ Edición de perfil ---------------------------------------------
 @login_required
 def profile(request):
     usuario = request.user
-    print("Valor de usuario:", usuario)
     
     if request.method == 'POST':
-        print("Datos POST:", request.POST)
-        
         formEdit = UserEditForm(request.POST)
-        
-
         if formEdit.is_valid():
             user = User.objects.get(username=usuario)
             
@@ -115,39 +104,37 @@ def profile(request):
 
     return render(request, 'Aplicacion_Inventario/editar_perfil.html', {'form': formEdit})
 
-
 # ------------------------------------ Cambio de clave ---------------------------------------------
 class CambiarClave(LoginRequiredMixin, PasswordChangeView):
     template_name = 'Aplicacion_Inventario/cambio_clave.html'
     success_url = reverse_lazy('index')
 
-
 # ------------------------------------ Agregar Avatar ---------------------------------------------
 @login_required
 def agregar_avatar(request):
     if request.method == 'POST':
-        formAvatar = AvatarForm(request.POST)
+        formAvatar = AvatarForm(request.POST, request.FILES)
         
         if formAvatar.is_valid():
-            user = User.objects.get(username=request.user)
-            #___Borrar avatares viejos
-            avatarViejo = Avatar.objects.filter(user=request.user)
+            usuario = User.objects.get(username=request.user)
+            
+            #___Borrar avatares viejos------------------------------
+            avatarViejo = Avatar.objects.filter(user=usuario)
             if len(avatarViejo) > 0:
                 for i in range(len(avatarViejo)):
                     avatarViejo[i].delete()
             #-------------------------------------------------------
-            avatar = Avatar(user=request.user, 
+            
+            avatar = Avatar(user=usuario, 
                             imagen= formAvatar.cleaned_data['imagen'])
             avatar.save()
-            imagen = Avatar.objects.get(user=request.user.id).imagen.url
+            imagen = Avatar.objects.get(user=usuario).imagen.url
             request.session['avatar'] = imagen
-            print(f"{imagen}")
             return redirect(reverse_lazy('index'))
     else:
         formAvatar = AvatarForm()
         
     return render(request, 'Aplicacion_Inventario/agregar_avatar.html', {'form': formAvatar})
-        
 
 # ------------------------------------ Página Principal ---------------------------------------------
 @login_required
@@ -164,7 +151,6 @@ def index(request):
 
     return render(request, 'Aplicacion_Inventario/index.html', contexto)
 
-
 # ------------------------------------ Notebooks ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
@@ -177,7 +163,6 @@ def notebooks(request):
         if miFormularioNotebook.is_valid():
             miFormularioNotebook.save()
             return redirect(reverse_lazy('notebooks'))
-        
     else:
         miFormularioNotebook = NotebookForm()
     
@@ -199,6 +184,12 @@ def notebooks(request):
     
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)
 
+@login_required
+def exportar_notebooks(request):
+    campos_personas = ['id', 'marca_notebook', 'nombre_notebook', 
+                       'numero_serie_notebook', 'modelo_notebook', 'estado_notebook']
+    return exportar_modelo(request, Notebook, campos_personas, 'datos_notebooks')
+
 class NotebookUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Notebook
     fields = ['nombre_notebook', 'nombre_notebook', 'marca_notebook', 'numero_serie_notebook', 
@@ -219,7 +210,6 @@ class NotebookDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         context['current_user'] = self.request.user
         return context
 
-
 # ------------------------------------ Campañas ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
@@ -232,7 +222,6 @@ def campanias(request):
         if miFormularioCampania.is_valid():
             miFormularioCampania.save()
             return redirect(reverse_lazy('campanias'))
-    
     else:
         miFormularioCampania = CampaniaForm()
     
@@ -252,8 +241,12 @@ def campanias(request):
                     'current_user': request.user,
                     'current_date': current_date}
     
-    
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
+
+@login_required
+def exportar_campanias(request):
+    campos_personas = ['id', 'nombre_campania', 'descripcion_campania']
+    return exportar_modelo(request, Campania, campos_personas, 'datos_campanias')
 
 class CampaniaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Campania
@@ -274,7 +267,6 @@ class CampaniaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         context['current_user'] = self.request.user
         return context
 
-
 # ------------------------------------ PC's ---------------------------------------------
 
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
@@ -287,7 +279,6 @@ def computadoras_escritorio(request):
         if miFormularioComputadora.is_valid():
             miFormularioComputadora.save()
             return redirect(reverse_lazy('computadoras'))
-    
     else:
         miFormularioComputadora = ComputadoraForm()
         
@@ -307,8 +298,12 @@ def computadoras_escritorio(request):
                     'current_user': request.user,
                     'current_date': current_date}
     
-    
     return render(request, 'Aplicacion_Inventario/computadoras_escritorio.html', contexto)
+
+@login_required
+def exportar_computadoras(request):
+    campos_personas = ['id', 'nombre_computadora', 'estado_computadora_escritorio', 'version_windows']
+    return exportar_modelo(request, Computadora, campos_personas, 'datos_computadoras')
 
 class ComputadoraUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Computadora
@@ -341,7 +336,6 @@ def perifericos(request):
         if miFormularioMouse.is_valid():
             miFormularioMouse.save()
             return redirect(reverse_lazy('perifericos'))
-    
     else:
         miFormularioMouse = MouseForm()
     
@@ -359,7 +353,6 @@ def perifericos(request):
         if miFormularioHeadset.is_valid():
             miFormularioHeadset.save()
             (reverse_lazy('perifericos'))
-    
     else:
         miFormularioHeadset = HeadsetForm()
         
@@ -382,6 +375,10 @@ def perifericos(request):
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 # ----- Mouse ---------------------------------------------
+@login_required
+def exportar_mouse(request):
+    campos_personas = ['id', 'marca_mouse']
+    return exportar_modelo(request, Mouse, campos_personas, 'datos_mouse')
 class MouseUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Mouse
     fields = ['marca_mouse']
@@ -402,6 +399,10 @@ class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         return context
 
 # ----- Headset ---------------------------------------------
+@login_required
+def exportar_headset(request):
+    campos_personas = ['id', 'marca_headset']
+    return exportar_modelo(request, Headset, campos_personas, 'datos_headset')
 class HeadsetUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Headset
     fields = ['marca_headset']
@@ -421,9 +422,7 @@ class HeadsetDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         context['current_user'] = self.request.user
         return context
 
-
 # ------------------------------------ Personas ---------------------------------------------
-
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
 @login_required
 def personas(request):
@@ -456,6 +455,11 @@ def personas(request):
     }
     
     return render(request, 'Aplicacion_Inventario/personas.html', contexto)
+
+@login_required
+def exportar_personas(request):
+    campos_personas = ['id', 'nombre_persona', 'apellido_persona', 'id_notebook', 'id_campania']
+    return exportar_modelo(request, Persona, campos_personas, 'datos_personas')
 
 class PersonaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Persona
