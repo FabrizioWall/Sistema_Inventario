@@ -32,7 +32,7 @@
             <div class="input-box-register">
                 <div class="input-field-register">
                     {{ form.old_password.label_tag }}
-                    {{ form.old_password }}
+                    {{ form.old_password }}                        
                 </div>
                 <div class="input-field-register">
                     {{ form.new_password1.label_tag }}
@@ -49,10 +49,15 @@
         
         <div style="text-align: center; margin-top: 20px;">
             <a href="{% url 'index' %}" style="background-color: green; 
-            color: white; border: none; padding: 10px 20px; cursor: pointer; 
-            border-radius: 5px; text-decoration: none; margin-top: 7px; display: block;">
+                        color: white; border: none; padding: 10px 20px; cursor: pointer; 
+                        border-radius: 5px; text-decoration: none; margin-top: 7px; display: block;">
                 Volver a inicio
             </a>
+        </div>
+        <div>
+            {% if form.old_password.value != user.old_password  %}
+                <h4 style="color:red; margin-top:20px;"> La contraseña antigua es incorrecta. </h4>
+            {% endif %}
         </div>
     </div>
 </body>

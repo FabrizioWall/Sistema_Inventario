@@ -23,7 +23,8 @@
             <form action="{% url 'perifericos' %}" method="get">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center;">
-                    <input type="text" name="buscar_mouse" placeholder="Marca de Mouse..." class="src" autocomplete="off" id="buscar_mouse"> 
+                    <input type="text" name="buscar_mouse" placeholder="Marca de Mouse..." 
+                            class="src" autocomplete="off" id="buscar_mouse"> 
                     <input type="submit" value="Buscar" style="">
                 </div>
             </form>
@@ -65,7 +66,7 @@
 <br>
 
 <div class="tabla-container">
-    <table class="table">
+    <table id="tabla-mouse" class="table">
         <thead class="th">
             <tr>
                 <th>Identificador</th>
@@ -96,15 +97,14 @@
     </table>
 </div>
 
-<br>
-
 <div style="display: flex; align-items: center; margin-left: 30px;">
     <div>
         <div class="box">
             <form action="{% url 'perifericos' %}" method="get">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center;">
-                    <input type="text" name="buscar_headset" placeholder="Marca de Headset..." class="src" autocomplete="off" id="buscar_headset"> 
+                    <input type="text" name="buscar_headset" placeholder="Marca de Headset..." 
+                            class="src" autocomplete="off" id="buscar_headset"> 
                     <input type="submit" value="Buscar" style="">
                 </div>
             </form>
@@ -143,7 +143,7 @@
 </div>
 
 <div class="tabla-container">
-    <table class="table">
+    <table id="tabla-headset" class="table">
         <thead class="th">
             <tr>
                 <th>Identificador</th>
@@ -173,6 +173,30 @@
         </tbody>      
     </table>
 </div>
-<br>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
+
+<script>
+    $(document).ready(function () {
+        $('#tabla-headset').DataTable({
+            "order": [[1, "asc"]],
+            "pageLength": 5,
+            "bFilter": false
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#tabla-mouse').DataTable({
+            "order": [[1, "asc"]],
+            "pageLength": 5,
+            "bFilter": false
+        });
+    });
+</script>
+
 
 {% endblock contenido_pagina %}

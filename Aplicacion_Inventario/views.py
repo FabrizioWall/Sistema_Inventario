@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import PasswordChangeView
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
 from .models import *
@@ -34,6 +34,36 @@ def exportar_modelo(request, modelo, campos, nombre_archivo):
         datos_elemento = [getattr(elemento, campo) for campo in campos]
         writer.writerow(datos_elemento)
 
+    return response
+
+#Formato de mail
+def notas_mail(request, persona_id):
+    try:
+        persona = Persona.objects.get(id=persona_id)
+    except Persona.DoesNotExist:
+        return HttpResponse("Persona no encontrada", status=404)
+
+    # Obtener detalles de la notebook asociada a la persona
+    if persona.id_notebook:
+        numero_serie = persona.id_notebook.numero_serie_notebook
+        nombre_notebook = persona.id_notebook.nombre_notebook
+        modelo_notebook = persona.id_notebook.modelo_notebook
+    else:
+        return HttpResponse("No se encontró una notebook asociada a esta persona", status=404)
+
+    # Crear el contenido del archivo de texto
+    file_content = f"""-------------------------------------------------------------
+                        Se hace entrega de notebook a {persona.nombre_persona} {persona.apellido_persona}
+
+                        Datos Notebook:
+                        - Numero de Serie: {numero_serie}
+                        - Nombre de Notebook: {nombre_notebook}
+                        - Modelo de Notebook: {modelo_notebook}
+                    -------------------------------------------------------------"""
+
+    # Generar respuesta para descargar el archivo
+    response = HttpResponse(file_content, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="entrega_notebook.txt"'
     return response
 
 # ------------------------------------ Login ---------------------------------------------
@@ -107,7 +137,13 @@ def profile(request):
 # ------------------------------------ Cambio de clave ---------------------------------------------
 class CambiarClave(LoginRequiredMixin, PasswordChangeView):
     template_name = 'Aplicacion_Inventario/cambio_clave.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('login_sistema')
+    
+    #Deslogueo al usuario despúes de cambiar la clave
+    def form_valid(self, form):
+        
+        logout(self.request)
+        return super().form_valid(form)
 
 # ------------------------------------ Agregar Avatar ---------------------------------------------
 @login_required
@@ -199,6 +235,7 @@ class NotebookUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 class NotebookDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -208,6 +245,7 @@ class NotebookDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 # ------------------------------------ Campañas ---------------------------------------------
@@ -256,6 +294,7 @@ class CampaniaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
     
 class CampaniaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -265,6 +304,7 @@ class CampaniaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 # ------------------------------------ PC's ---------------------------------------------
@@ -313,6 +353,7 @@ class ComputadoraUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
     
 class ComputadoraDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -322,6 +363,7 @@ class ComputadoraDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 # ------------------------------------ Perifericos ---------------------------------------------
@@ -379,6 +421,7 @@ def perifericos(request):
 def exportar_mouse(request):
     campos_personas = ['id', 'marca_mouse']
     return exportar_modelo(request, Mouse, campos_personas, 'datos_mouse')
+
 class MouseUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Mouse
     fields = ['marca_mouse']
@@ -387,6 +430,7 @@ class MouseUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
     
 class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -396,6 +440,7 @@ class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 # ----- Headset ---------------------------------------------
@@ -403,6 +448,7 @@ class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
 def exportar_headset(request):
     campos_personas = ['id', 'marca_headset']
     return exportar_modelo(request, Headset, campos_personas, 'datos_headset')
+
 class HeadsetUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     model = Headset
     fields = ['marca_headset']
@@ -411,6 +457,7 @@ class HeadsetUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
     
 class HeadsetDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -420,6 +467,7 @@ class HeadsetDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 # ------------------------------------ Personas ---------------------------------------------
@@ -471,6 +519,7 @@ class PersonaUpdate(LoginRequiredMixin, UpdateView): #CRUD: Update
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
     
 class PersonaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
@@ -480,6 +529,7 @@ class PersonaDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_user'] = self.request.user
+        context['current_date'] = current_date
         return context
 
 

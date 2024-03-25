@@ -51,6 +51,9 @@ urlpatterns = [
     path('exportar-mouse/', exportar_mouse, name='exportar_mouse'),
     path('exportar-campañas/', exportar_campanias, name='exportar_campanias'),
     
+    # ------------------------------------ Exportar Formato mail ---------------------------------------------
+    path('mail-txt/<int:persona_id>/', notas_mail, name='mail_txt'),
+    
     # ---------------------- Edición Perfil, Cambio Clave, Cambio Avatar ------------------------
     path('perfil/', profile, name='edicion_perfil'),
     path('<int:pk>/password/', CambiarClave.as_view(), name='cambiar_clave'),

@@ -24,7 +24,8 @@
             <form action="{% url 'personas' %}" method="get">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center;">
-                    <input type="text" name="buscar_persona" placeholder="Nombre..." class="src" autocomplete="off" id="buscar_persona"> 
+                    <input type="text" name="buscar_persona" placeholder="Nombre..." 
+                            class="src" autocomplete="off" id="buscar_persona"> 
                     <input type="submit" value="Buscar" style="">
                 </div>
             </form>
@@ -43,23 +44,28 @@
     </div>
 
     <div id="modal" class="modal">
-        <div class="modal-contenido" style="text-align: center">
+        <div class="modal-contenido">
             <span class="cerrar" id="btn-cerrar-modal">&times;</span> 
             <form method="POST">
                 {% csrf_token %}
-                <table style="margin: 0 auto;">
-                    {{ miFormularioPersona.as_table }}
-                </table>
-                <input type="submit" value="Confirmar" style="margin-top: 10px">
+                <div style="max-width: 500px; margin: 0 auto;">
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%;">
+                            {{ miFormularioPersona.as_table }}
+                        </table>
+                    </div>
+                    <input type="submit" value="Confirmar" class="btn btn-primary" style="margin-top: 10px;">
+                </div>
             </form>
         </div>
     </div>
+    
 </div>
 
 <br>
 
 <div class="tabla-container">
-    <table class="table">
+    <table id="tabla-personas" class="table" data-order='[[ 1, "asc" ]]' data-page-length='5'>
         <thead class="th">
             <tr>
                 <th>Identificador</th>
@@ -67,6 +73,7 @@
                 <th>Notebook</th>
                 <th>Campaña asignada</th>
                 <th>Acciones</th>
+                <th>Formato de Mail</th>
             </tr>
         </thead>
         <tbody>
@@ -88,11 +95,35 @@
                         </a>
                     </button>
                 </td>
+                <td>
+                    <button class="boton-mail">
+                        <a href="{% url 'mail_txt' p.id %}?persona_id={{ p.id }}" style="text-decoration: none; color:white">
+                            <i class="fa-solid fa-share"></i> Mandar Mail
+                        </a>
+                    </button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" 
+            crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
+
+<script>
+    $(document).ready(function () {
+        $('#tabla-personas').DataTable({
+            "order": [[1, "asc"]],
+            "pageLength": 5,
+            "bFilter": false
+        });
+    });
+</script>
+
 {% endblock contenido_pagina %}
+
+
 
