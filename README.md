@@ -140,6 +140,6 @@
 
   - Casos Unitarios de prueba (Unit Test): [Casos de Prueba](https://docs.google.com/spreadsheets/d/1PUAJ6mnpDpb2WOapeePhtsYSDb4oKfd7MS99KBuj6Eg/edit?usp=sharing)
   
-  - Video de Youtube explicativo:
+  - Video de Youtube explicativo: [SGI-Inventario](https://www.youtube.com/watch?v=CJhIQVW3iO0)
   
 </p>
