@@ -19,7 +19,7 @@ import csv
 current_date = datetime.now().date() 
 
 # Create your views here.
-# ------------------------------------ Experimental ---------------------------------------------
+# ------------------------------------ Generales ---------------------------------------------
 # Exportar
 def exportar_modelo(request, modelo, campos, nombre_archivo):
     response = HttpResponse(content_type='text/csv')
@@ -43,7 +43,7 @@ def notas_mail(request, persona_id):
     except Persona.DoesNotExist:
         return HttpResponse("Persona no encontrada", status=404)
 
-    # Obtener detalles de la notebook asociada a la persona
+    # Obtengo los detalles de la notebook asociada a la persona
     if persona.id_notebook:
         numero_serie = persona.id_notebook.numero_serie_notebook
         nombre_notebook = persona.id_notebook.nombre_notebook
@@ -51,17 +51,19 @@ def notas_mail(request, persona_id):
     else:
         return HttpResponse("No se encontró una notebook asociada a esta persona", status=404)
 
-    # Crear el contenido del archivo de texto
-    file_content = f"""-------------------------------------------------------------
+    # Creo el contenido del archivo de texto
+    file_content = f"""
+                    -------------------------------------------------------------
                         Se hace entrega de notebook a {persona.nombre_persona} {persona.apellido_persona}
 
                         Datos Notebook:
                         - Numero de Serie: {numero_serie}
                         - Nombre de Notebook: {nombre_notebook}
                         - Modelo de Notebook: {modelo_notebook}
-                    -------------------------------------------------------------"""
+                    -------------------------------------------------------------
+                    """
 
-    # Generar respuesta para descargar el archivo
+    # Descargo el archivo
     response = HttpResponse(file_content, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="entrega_notebook.txt"'
     return response
@@ -83,7 +85,7 @@ def login_request(request):
             try:
                 avatar = Avatar.objects.get(user=request.user.id).imagen.url
             except:
-                avatar = '/media/avatares/default.jpg'
+                avatar = '/media/avatares/default.svg'
             finally:
                 request.session['avatar'] = avatar
             return redirect(reverse_lazy('index'))
@@ -101,11 +103,20 @@ def registro_request(request):
         miFormRegistro = RegistroForm(request.POST)
         
         if miFormRegistro.is_valid():
-            usuario = miFormRegistro.cleaned_data.get('username')
+            nombre = miFormRegistro.cleaned_data.get('nombre')
+            apellido = miFormRegistro.cleaned_data.get('apellido')
+            
+            if not nombre.isalpha():
+                messages.error(request, "ERROR: El campo 'Nombre' solo puede contener letras.")
+                return redirect(reverse_lazy('registro_sistema'))
+            if not apellido.isalpha():
+                messages.error(request, "ERROR: El campo 'Apellido' solo puede contener letras.")
+                return redirect(reverse_lazy('registro_sistema'))
+            
             miFormRegistro.save()
             return redirect(reverse_lazy('login_sistema'))
-        else:
-            messages.error(request, "ERROR: Las contraseñas deben coincidir.")
+        else:                  
+            messages.error(request, "ERROR: Se produjeron errores. Verifique usuario y/o contraseña nueva.")
             return redirect(reverse_lazy('registro_sistema')) 
     else:
         miFormRegistro = RegistroForm()
@@ -118,19 +129,16 @@ def profile(request):
     usuario = request.user
     
     if request.method == 'POST':
-        formEdit = UserEditForm(request.POST)
+        formEdit = UserEditForm(request.POST, instance=request.user)
         if formEdit.is_valid():
-            user = User.objects.get(username=usuario)
-            
-            user.email = formEdit.cleaned_data.get('email')
-            user.first_name = formEdit.cleaned_data.get('first_name')
-            user.last_name = formEdit.cleaned_data.get('last_name')
-            
             formEdit.save()
             messages.success(request, 'Tu perfil ha sido actualizado.')
             return redirect(reverse_lazy('edicion_perfil'))
+        else:
+            messages.error(request, 'ERROR: Intentar nuevamente')
+            return redirect(reverse_lazy('edicion_perfil'))
     else:
-        formEdit = UserEditForm(instance=usuario)
+        formEdit = UserEditForm(instance=request.user)
 
     return render(request, 'Aplicacion_Inventario/editar_perfil.html', {'form': formEdit})
 
@@ -139,12 +147,12 @@ class CambiarClave(LoginRequiredMixin, PasswordChangeView):
     template_name = 'Aplicacion_Inventario/cambio_clave.html'
     success_url = reverse_lazy('login_sistema')
     
-    #Deslogueo al usuario despúes de cambiar la clave
-    def form_valid(self, form):
+    # Deslogueo al usuario después de cambiar la clave
+    def form_valido(self, form):
         
         logout(self.request)
-        return super().form_valid(form)
-
+        return super().form_valido(form)
+    
 # ------------------------------------ Agregar Avatar ---------------------------------------------
 @login_required
 def agregar_avatar(request):
@@ -154,7 +162,7 @@ def agregar_avatar(request):
         if formAvatar.is_valid():
             usuario = User.objects.get(username=request.user)
             
-            #___Borrar avatares viejos------------------------------
+            # Borrar avatares viejos ------------------------------
             avatarViejo = Avatar.objects.filter(user=usuario)
             if len(avatarViejo) > 0:
                 for i in range(len(avatarViejo)):
@@ -197,7 +205,13 @@ def notebooks(request):
         miFormularioNotebook = NotebookForm(request.POST)
         
         if miFormularioNotebook.is_valid():
+            nombre = miFormularioNotebook.cleaned_data.get('nombre_notebook')
+            if Notebook.objects.filter(nombre_notebook=nombre).exists():
+                messages.error(request, 'ERROR: La notebook ya existe en la Base de Datos.')
+                return redirect(reverse_lazy('notebooks'))
+            
             miFormularioNotebook.save()
+            messages.success(request, 'La notebook ha sido agregada con éxito.')
             return redirect(reverse_lazy('notebooks'))
     else:
         miFormularioNotebook = NotebookForm()
@@ -220,6 +234,7 @@ def notebooks(request):
     
     return render(request, 'Aplicacion_Inventario/notebooks.html', contexto)
 
+# Llamo a la función de exportar
 @login_required
 def exportar_notebooks(request):
     campos_personas = ['id', 'marca_notebook', 'nombre_notebook', 
@@ -281,6 +296,7 @@ def campanias(request):
     
     return render(request, 'Aplicacion_Inventario/campanias.html', contexto)
 
+# Llamo a la función de exportar
 @login_required
 def exportar_campanias(request):
     campos_personas = ['id', 'nombre_campania', 'descripcion_campania']
@@ -317,7 +333,13 @@ def computadoras_escritorio(request):
         miFormularioComputadora = ComputadoraForm(request.POST)
         
         if miFormularioComputadora.is_valid():
+            nombre_pc = miFormularioComputadora.cleaned_data['nombre_computadora']
+            if Computadora.objects.filter(nombre_computadora=nombre_pc).exists():
+                messages.error(request, 'ERROR: La computadora ya existe.')
+                return redirect(reverse_lazy('computadoras'))
+            
             miFormularioComputadora.save()
+            messages.success(request, 'Se ha agregado la PC.')
             return redirect(reverse_lazy('computadoras'))
     else:
         miFormularioComputadora = ComputadoraForm()
@@ -340,6 +362,7 @@ def computadoras_escritorio(request):
     
     return render(request, 'Aplicacion_Inventario/computadoras_escritorio.html', contexto)
 
+# Llamo a la función de exportar
 @login_required
 def exportar_computadoras(request):
     campos_personas = ['id', 'nombre_computadora', 'estado_computadora_escritorio', 'version_windows']
@@ -417,6 +440,7 @@ def perifericos(request):
     return render(request, 'Aplicacion_Inventario/perifericos.html', contexto)
 
 # ----- Mouse ---------------------------------------------
+# Llamo a la función de exportar
 @login_required
 def exportar_mouse(request):
     campos_personas = ['id', 'marca_mouse']
@@ -444,6 +468,7 @@ class MouseDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         return context
 
 # ----- Headset ---------------------------------------------
+# Llamo a la función de exportar
 @login_required
 def exportar_headset(request):
     campos_personas = ['id', 'marca_headset']
@@ -471,14 +496,17 @@ class HeadsetDelete(LoginRequiredMixin, DeleteView): #CRUD: Delete
         return context
 
 # ------------------------------------ Personas ---------------------------------------------
+
 #CRUD: 'Crear' y 'Buscar (read) están definidas en esta función!
 @login_required
 def personas(request):
     # -------------------------- Create --------------------------------
     if request.method == 'POST':
         miFormularioPersona = PersonaForm(request.POST)
-        if miFormularioPersona.is_valid():
+        
+        if miFormularioPersona.is_valid():            
             miFormularioPersona.save()
+            messages.success(request, 'La persona ha sido agregada con éxito.')
             return redirect(reverse_lazy('personas'))
     else:
         miFormularioPersona = PersonaForm()
@@ -504,6 +532,7 @@ def personas(request):
     
     return render(request, 'Aplicacion_Inventario/personas.html', contexto)
 
+# Llamo a la función de exportar
 @login_required
 def exportar_personas(request):
     campos_personas = ['id', 'nombre_persona', 'apellido_persona', 'id_notebook', 'id_campania']

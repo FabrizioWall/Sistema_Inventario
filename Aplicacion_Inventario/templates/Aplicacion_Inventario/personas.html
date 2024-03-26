@@ -32,6 +32,12 @@
         </div>
     </div>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div style="color:blue; margin-left:110px;">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
             <a href="{% url 'exportar_personas' %}" style="text-decoration: none; color:black">

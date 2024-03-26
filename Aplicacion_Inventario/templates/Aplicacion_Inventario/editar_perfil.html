@@ -22,7 +22,7 @@
         background-position: center; 
     }
     .input-field-register a {
-        color: red; /* Cambia el color del enlace dentro de .input-field-register */
+        color: red;
     }
 </style>
 
@@ -31,6 +31,12 @@
         <form action="" method="post">
             {% csrf_token %}
             <h1>Panel de Edición</h1>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="color:red;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
 
             <div class="input-box-register">
                 <div class="input-field-register">

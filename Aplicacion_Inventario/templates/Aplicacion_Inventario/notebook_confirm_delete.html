@@ -21,16 +21,20 @@
 <form action="" method="post" style="display: flex; flex-direction: column; align-items: center;">
     {% csrf_token %}
     <div style="text-align:center; margin-top: 20px;">
-        <h3>Se procede a eliminar Notebook: <p style="color:blue"> {{ object }}</p></h3>
+        <h3>
+            Se procede a eliminar Notebook: <p style="color:blue"> {{ object }}</p>
+        </h3>
     </div>
     <div style="margin-top: 25px; display: flex; justify-content: center;">
         <div style="margin-top: 25px; display: flex; justify-content: center;">
             <input type="submit" value="Aceptar" 
-            style="background-color: #008000; color: white; 
-            border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">
+                    style="background-color: #008000; color: white; 
+                        border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">
             <a href="{% url 'notebooks' %}" style="background-color: #FF0000; 
-            color: white; border: none; padding: 10px 20px; cursor: pointer; 
-            border-radius: 5px; text-decoration: none; margin-left: 10px;">Cancelar</a>
+                    color: white; border: none; padding: 10px 20px; cursor: pointer; 
+                    border-radius: 5px; text-decoration: none; margin-left: 10px;">
+                Cancelar
+            </a>
         </div>
     </div>
 </form>

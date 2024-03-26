@@ -55,9 +55,9 @@
             </a>
         </div>
         <div>
-            {% if form.old_password.value != user.old_password  %}
-                <h4 style="color:red; margin-top:20px;"> La contraseña antigua es incorrecta. </h4>
-            {% endif %}
+            {% for field in form %}
+                <h4 style="color:red; margin-top:20px;"> {{ field.errors }} </h4>
+            {% endfor %}
         </div>
     </div>
 </body>

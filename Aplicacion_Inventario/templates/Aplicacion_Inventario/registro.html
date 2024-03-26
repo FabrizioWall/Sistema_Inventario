@@ -29,10 +29,10 @@
             {% csrf_token %}
             <h1>Panel de Registro</h1>
             {% if messages %}
-            {% for message in messages %}
-                <div>{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+                {% for message in messages %}
+                    <div style="color:red;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
             <div class="input-box-register">
                 <div class="input-field-register">
                     {{ form.nombre.label_tag }}
@@ -63,7 +63,6 @@
                 </div>
             </div>
             
-
             <button type="submit" class="btn"> Completar Registro </button>
         </form>
     </div>

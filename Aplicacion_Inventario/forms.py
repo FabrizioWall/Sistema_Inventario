@@ -55,6 +55,12 @@ class HeadsetForm(forms.ModelForm):
         fields = ['marca_headset']
 
 class PersonaForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(PersonaForm, self).__init__(*args, **kwargs)
+        # Se filtra las opciones de la lista desplegable para id_notebook
+        self.fields['id_notebook'].queryset = Notebook.objects.filter(persona__isnull=True)
+    
     class Meta:
         model = Persona
         fields = ['nombre_persona', 'apellido_persona', 'cuit_persona', 'email_persona', 

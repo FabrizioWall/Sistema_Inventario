@@ -32,6 +32,12 @@
         </div>
     </div>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div style="color:blue; margin-left:110px;">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <div style="margin-left: auto; margin-right: 30px;">
         <button class="boton-exportar">
             <a href="{% url 'exportar_computadoras' %}" style="text-decoration: none; color:black">
@@ -93,7 +99,8 @@
     </table>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" 
+        crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
 
@@ -106,8 +113,5 @@
         });
     });
 </script>
-
-
-
 
 {% endblock contenido_pagina %}

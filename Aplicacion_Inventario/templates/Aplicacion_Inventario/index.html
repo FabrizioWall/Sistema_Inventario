@@ -27,7 +27,9 @@
         <body class="sb-nav-fixed">
             <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
                 <!-- Sidebar Toggle-->
-                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <span class="navbar-text d-none d-lg-block">Menú</span>            
                 <!-- Navbar Brand-->
                 <div class="navbar-brand ps-3 d-flex justify-content-center flex-grow-1">
@@ -43,8 +45,10 @@
                 <!-- Navbar-->
                 <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user fa-fw"></i></a>
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" 
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user fa-fw"></i>
+                        </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li>
                                 <a href="{% url 'edicion_perfil' %}">
@@ -68,7 +72,8 @@
                     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                         <div class="sb-sidenav-menu">
                             <div class="nav">
-                                <a class="nav-link" href="{% url 'index' %}" style="text-align:center; display: flex; align-items: center; justify-content: center;">
+                                <a class="nav-link" href="{% url 'index' %}" 
+                                    style="text-align:center; display: flex; align-items: center; justify-content: center;">
                                     <div class="sb-nav-link-icon"><i class="fa-solid fa-house"></i></div>
                                     Inicio
                                 </a>
@@ -78,49 +83,53 @@
                                     Usuarios
                                 </a>
                                 <div class="sb-sidenav-menu-heading">PYD-Notebooks y Perifericos</div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNotebooks" aria-expanded="false" 
-                                        aria-controls="collapseNotebooks">
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNotebooks" 
+                                    aria-expanded="false" aria-controls="collapseNotebooks">
                                     <div class="sb-nav-link-icon"><i class="fa-solid fa-laptop"></i></div>
                                     Notebooks
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="collapseNotebooks" aria-labelledby="headingNotebooks" data-bs-parent="#sidenavAccordion">
+                                <div class="collapse" id="collapseNotebooks" aria-labelledby="headingNotebooks" 
+                                        data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="{% url 'notebooks' %}">Ver Notebooks en Sistema</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePerifericos" aria-expanded="false" 
-                                        aria-controls="collapsePerifericos">
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePerifericos" 
+                                    aria-expanded="false" aria-controls="collapsePerifericos">
                                     <div class="sb-nav-link-icon"><i class="fa-solid fa-hand"></i></div>
                                     Perifericos
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="collapsePerifericos" aria-labelledby="headingPerifericos" data-bs-parent="#sidenavAccordion">
+                                <div class="collapse" id="collapsePerifericos" aria-labelledby="headingPerifericos" 
+                                        data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="{% url 'perifericos' %}">Ver Perifericos en Sistema</a>
                                     </nav>
                                 </div>
                                 <div class="sb-sidenav-menu-heading">PYD-Campañas</div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCampanas" aria-expanded="false" 
-                                        aria-controls="collapseCampanas">
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCampanas" 
+                                    aria-expanded="false" aria-controls="collapseCampanas">
                                     <div class="sb-nav-link-icon"><i class="fa-solid fa-money-check"></i></div>
                                     Campañas
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="collapseCampanas" aria-labelledby="headingCampanas" data-bs-parent="#sidenavAccordion">
+                                <div class="collapse" id="collapseCampanas" aria-labelledby="headingCampanas" 
+                                        data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="{% url 'campanias' %}">Ver Campañas en Sistema</a>
                                     </nav>
                                 </div>
                                 
                                 <div class="sb-sidenav-menu-heading">PYD-Computadoras</div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseComputadoras" aria-expanded="false" 
-                                        aria-controls="collapseComputadoras">
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseComputadoras" 
+                                    aria-expanded="false" aria-controls="collapseComputadoras">
                                     <div class="sb-nav-link-icon"><i class="fa-solid fa-computer"></i></div>
                                     Computadoras 
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="collapseComputadoras" aria-labelledby="headingComputadoras" data-bs-parent="#sidenavAccordion">
+                                <div class="collapse" id="collapseComputadoras" aria-labelledby="headingComputadoras" 
+                                        data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="{% url 'computadoras' %}">Ver Computadoras en Sistema</a>
                                     </nav>
@@ -144,7 +153,8 @@
                         <main>
                             <div class="text-muted" style="display: flex; align-items: center;">
                                 <div>
-                                    <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" style="margin-top: 30px; margin-left: 30px;">
+                                    <img src="{% static 'assets/img/logo_pyd_final.png' %}" alt="" height="60" 
+                                            style="margin-top: 30px; margin-left: 30px;">
                                 </div>
                                 <div style="margin-left: auto; margin-right: 30px;">
                                     <h2 style="margin-top: 45px;">Gerencia de Sistemas</h2>
